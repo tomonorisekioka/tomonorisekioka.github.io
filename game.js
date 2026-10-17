@@ -734,76 +734,202 @@
     branch(x,y,height);branch(x+13,y-3,height-5);
     rect(x-4,y-2,23,3,"#98667b");
   }
+  // The three coastlines are deliberately different landscapes, not recolors
+  // of one generic reef. They are stylized marine habitats, not photographs.
+  function seaRock(x,y,w,h,base,highlight){
+    rect(x,y,w,h,base);
+    rect(x+2,y+1,Math.max(1,w-5),3,highlight);
+    rect(x+3,y+5,Math.max(1,w-7),Math.max(1,h-7),base);
+    rect(x+4,y+h-4,Math.max(1,w-9),2,"#233e4c");
+  }
+  function longSeagrass(x,base,height,t,color,light){
+    for(let k=0;k<3;k++){
+      const sway=Math.sin(t*.6+x*.17+k)*3;
+      for(let h=0;h<height;h+=6){
+        const bend=Math.sin(h*.07+t*.55+k)*2+(h/height)*sway;
+        rect(Math.round(x+k*4+bend),base-h,2,7,k%2?light:color);
+      }
+    }
+  }
+  function brownAlgae(x,base,height,t,color){
+    const sway=Math.round(Math.sin(t*.7+x)*3);
+    for(let h=0;h<height;h+=5){
+      const stem=x+sway+Math.round(Math.sin(h*.08+t*.8)*3);
+      rect(stem,base-h,2,6,"#526e51");
+      if(h%10===0){
+        rect(stem-9,base-h,10,3,color);
+        rect(stem+2,base-h+3,11,3,color);
+        rect(stem-6,base-h-2,3,5,color);
+      }
+    }
+  }
+  function broadKelp(x,base,height,t){
+    for(let h=0;h<height;h+=4){
+      const shift=Math.round(Math.sin(t*.46+x*.1+(height-h)*.032)*5);
+      const xx=x+shift;
+      rect(xx,base-h,2,5,"#526849");
+      if(h>12&&h%16<4){
+        rect(xx-15,base-h+1,15,5,"#71875a");
+        rect(xx+2,base-h-3,16,5,"#59744c");
+        rect(xx+7,base-h-4,9,2,"#8e9c63");
+      }
+    }
+  }
+  function drawMusselBed(x,y){
+    for(let i=0;i<27;i++){
+      const xx=x+(i*13)%52,yy=y+Math.floor(i/6)*4+(i%3);
+      rect(xx,yy,4,6,i%3?"#2e4455":"#40536c");
+      rect(xx,yy,2,2,i%4?"#7995a3":"#b0c3bb");
+    }
+  }
+  function drawBuoy(t){
+    const sway=Math.round(Math.sin(t*.5)*1.5);
+    // The rope habitat is shared across regions so its amphipods remain findable.
+    rect(312,35,2,142,region==="temperate"?"#b4b48a":"#708a92");
+    for(let y=46;y<167;y+=8)rect(310+sway,y,4,2,"#8ba6a4");
+    if(region==="akkeshi"){
+      // Orange mooring float, northern working coast.
+      rect(302,18,24,19,"#e3a356");rect(303,20,22,5,"#ffda92");
+      rect(302,28,24,6,"#d77949");rect(310,13,9,6,"#e8e1c4");
+      rect(301,36,26,3,"#3f5861");
+    }else if(region==="temperate"){
+      // Green-and-yellow coastal float with a little netting.
+      rect(302,18,24,20,"#dfa85d");rect(302,20,24,8,"#f2d48a");
+      rect(302,29,24,6,"#468879");rect(310,12,8,6,"#f0e7bd");
+      rect(300,37,28,3,"#275b62");
+      ctx.strokeStyle="#65a69a";ctx.lineWidth=.75;ctx.globalAlpha=.45;
+      for(let x=300;x<=328;x+=7){ctx.beginPath();ctx.moveTo(x,45);ctx.lineTo(x+3,100);ctx.stroke();}
+      for(let y=51;y<100;y+=8){ctx.beginPath();ctx.moveTo(301,y);ctx.lineTo(330,y);ctx.stroke();}
+      ctx.globalAlpha=1;
+    }else{
+      // White/red mooring marker, North Atlantic rocky shore.
+      rect(305,15,19,27,"#d7e2dc");rect(305,21,19,6,"#b6504c");
+      rect(305,33,19,6,"#ba5a56");rect(311,9,7,6,"#d5e6df");
+      rect(303,41,23,3,"#243e50");
+    }
+    for(let i=0;i<8;i++){
+      const y=57+i*13,shift=Math.round(Math.sin(t*.7+i)*2);
+      rect(309+shift,y,6+i%3,2,region==="atlantic"?"#77917b":"#4b9c85");
+    }
+  }
+  function northernBottom(t){
+    // Estuarine seagrass, cool-water kelp and low rounded cobble beds.
+    for(let i=0;i<15;i++){
+      const x=10+i*21,height=17+(i*19)%27;
+      longSeagrass(x,175,height,t,"#245f68","#31767a");
+    }
+    [[0,168,39,24],[22,160,32,19],[202,165,32,19],
+      [223,158,31,20],[251,169,30,15]].forEach(([x,y,w,h],i)=>
+      seaRock(x,y,w,h,i%2?"#435768":"#334d60","#617584"));
+    // Thick eelgrass beds occupy the left third of the habitat.
+    for(let i=0;i<11;i++)longSeagrass(37+i*9,179,27+(i*7)%44,t,"#2c766b","#4b9f87");
+    for(let i=0;i<6;i++)kelp(125+i*11,176,35+(i*13)%37,t,"#356b62");
+    for(let i=0;i<4;i++)brownAlgae(22+i*13,170,30+i*8,t,"#667d57");
+    for(let i=0;i<20;i++){
+      const x=(i*43+7)%360,y=179+(i*11)%27;
+      rect(x,y,3+i%3,2,i%3?"#7c8b86":"#d8c9ab");
+    }
+  }
+  function temperateBottom(t){
+    // Brighter, broad algal canopy and patches of warm-colored sessile life.
+    for(let i=0;i<18;i++){
+      const x=8+i*19,height=17+(i*11)%23;
+      longSeagrass(x,175,height,t,"#1d756e","#289789");
+    }
+    [[0,172,38,16],[26,164,38,21],[207,164,38,22],
+      [237,155,39,25],[269,171,23,14]].forEach(([x,y,w,h],i)=>
+      seaRock(x,y,w,h,i%2?"#697a73":"#637e7b","#a0a691"));
+    for(let i=0;i<8;i++)kelp(39+i*11,173,30+(i*17)%45,t,"#298878");
+    for(let i=0;i<9;i++)brownAlgae(105+i*10,175,31+(i*13)%41,t,i%2?"#947c4e":"#ad9358");
+    drawCoral(211,159,14,"#ce9c91");
+    drawCoral(244,152,23,"#e4b189");
+    drawCoral(274,170,15,"#a68bba");
+    for(let i=0;i<14;i++){
+      const x=208+(i*17)%82,y=164+(i*7)%25;
+      rect(x,y,4,3,i%2?"#dcbb97":"#b7a4b8");
+    }
+    for(let i=0;i<18;i++){
+      const x=(i*37+11)%360,y=184+(i*9)%21;
+      rect(x,y,4,1,i%3?"#efdbaf":"#a8b7a3");
+    }
+  }
+  function atlanticBottom(t){
+    // Cold Atlantic rock shelf with attached mussels and broad-bladed kelp.
+    for(let i=0;i<13;i++){
+      const x=11+i*25,height=12+(i*17)%28;
+      rect(x,178-height,3,height,"#365862");
+    }
+    // Stepped rock ledges are intentionally prominent on this coast.
+    [[0,150,44,39],[24,162,36,25],[193,149,40,39],
+      [222,139,38,46],[253,151,44,35],[288,171,33,15]].forEach(([x,y,w,h],i)=>
+      seaRock(x,y,w,h,i%2?"#334957":"#293f50","#68828a"));
+    [[201,139,29,5],[235,128,25,5],[267,143,31,5]].forEach(([x,y,w,h])=>
+      rect(x,y,w,h,"#708c91"));
+    drawMusselBed(209,151);
+    drawMusselBed(246,163);
+    for(let i=0;i<5;i++)broadKelp(14+i*19,182,61+(i*13)%43,t);
+    for(let i=0;i<6;i++)kelp(105+i*13,180,25+(i*11)%37,t,"#607858");
+    for(let i=0;i<24;i++){
+      const x=(i*47+15)%360,y=177+(i*11)%30;
+      rect(x,y,3+(i%2),2,i%3?"#849399":"#bcc1af");
+    }
+    for(let i=0;i<15;i++){
+      const x=206+(i*19)%80,y=154+(i*9)%24;
+      rect(x,y,3,3,i%3?"#8a9491":"#ced1c1");
+    }
+  }
   function scene(t) {
     const colors=regions[region].water;
     rect(0,0,W,H,colors[0]);
-    for(let y=0;y<170;y+=5)rect(0,y,W,5,y<20?colors[0]:y<65?colors[1]:y<120?colors[2]:colors[3]);
-    // Fine horizontal light broken into water pixels.
-    for(let i=0;i<25;i++) {
-      const x=(i*79+17)%362,y=(i*37)%122+7;
-      rect(x+Math.round(Math.sin(t+i)*3),y,7+(i%3)*3,1,i%4===0?"#347a8a":"#1d6380");
+    for(let y=0;y<175;y+=5)
+      rect(0,y,W,5,y<20?colors[0]:y<65?colors[1]:y<120?colors[2]:colors[3]);
+    // Different amounts of sunlight emphasize the depth and water clarity.
+    const rays=region==="temperate"?6:region==="akkeshi"?3:2;
+    for(let i=0;i<rays;i++){
+      ctx.globalAlpha=region==="temperate"?.105:region==="akkeshi"?.048:.027;
+      const shift=region==="temperate"?52:100;
+      ctx.fillStyle=region==="temperate"?"#eeffe1":"#c2e8ea";
+      ctx.beginPath();ctx.moveTo(15+i*shift,0);ctx.lineTo(35+i*shift,0);
+      ctx.lineTo(99+i*shift,172);ctx.lineTo(44+i*shift,172);
+      ctx.closePath();ctx.fill();
     }
-    for(let i=0;i<4;i++){
-      ctx.globalAlpha=.045;
-      ctx.fillStyle="#b4fff4";ctx.beginPath();ctx.moveTo(35+i*97,0);
-      ctx.lineTo(45+i*97,0);ctx.lineTo(102+i*97,174);ctx.lineTo(55+i*97,174);ctx.closePath();ctx.fill();
-      ctx.globalAlpha=1;
+    ctx.globalAlpha=1;
+    // Underwater suspended particles.
+    for(let i=0;i<24;i++){
+      const x=(i*79+17)%360,y=(i*37)%121+9;
+      const shade=region==="temperate"?"#449fa3":region==="atlantic"?"#477588":"#2d7384";
+      rect(x+Math.round(Math.sin(t*.6+i)*3),y,6+(i%3)*3,1,shade);
     }
-    // Background silhouettes: eelgrass meadow, rope, rocks, branching coral.
-    for(let i=0;i<17;i++) {
-      const x=12+i*18,ht=14+(i*31%30);
-      const sx=x+Math.round(Math.sin(t*.42+i)*4);
-      rect(sx,177-ht,2,ht+6,i%3===0?"#155e61":"#225c64");
+    // Silt/sand floor, with visibly different sediment colors and relief.
+    const sand=regions[region].sand;
+    for(let x=0;x<W;x+=3){
+      const h=region==="atlantic"?174+Math.round(Math.sin(x*.045)*5+Math.cos(x*.10)*4):
+        region==="temperate"?177+Math.round(Math.sin(x*.028)*3+Math.cos(x*.07)*2):
+        174+Math.round(Math.sin(x*.039)*4+Math.cos(x*.093)*2);
+      rect(x,h,4,H-h,sand);
+      rect(x,h+3,4,H-h-3,region==="temperate"?"#d8c69c":
+        region==="atlantic"?"#a5a39e":"#c3af92");
     }
-    // The buoy and its rope occupy the upper-right water column.
-    rect(312,0,2,173,"#607d87");
-    for(let yy=33;yy<173;yy+=6){rect(311+Math.round(Math.sin(t*.7+yy*.05)),yy,2,3,"#9bab9a");}
-    rect(301,20,25,20,"#2e3746");rect(302,17,23,18,"#f1a64e");
-    rect(301,21,25,6,"#ffe3a5");rect(302,29,23,7,"#e98650");
-    rect(310,12,8,5,"#f5eee0");rect(312,9,4,3,"#6f8b93");
-    rect(299,34,29,3,"#283f4f");
-    // Sand floor — colors shift subtly with the region.
-    const sandTone=regions[region].sand;
-    for(let x=0;x<W;x+=3){const h=174+Math.round(Math.sin(x*.039)*4+Math.cos(x*.093)*2);
-      rect(x,h,4,H-h,sandTone);
-      rect(x,h+3,4,H-h-3,region==="temperate"?"#d9bd8d":region==="atlantic"?"#b9b0a2":"#c5a77b");
-    }
-    for(let i=0;i<90;i++){
-      const x=(i*73+19)%360,y=183+(i*17)%24;
-      rect(x,y,i%3?2:3,1,i%4===0?"#f1d6a1":"#8b795b");
-    }
-    // Rocky reef left and center.
-    [[0,169,38,19],[19,154,28,20],[30,165,36,13],[196,169,27,14],[212,158,35,16],[239,164,26,15],[263,174,20,11]].forEach(([x,y,w,h],i)=>{
-      rect(x,y,w,h,"#384f60");rect(x+3,y+2,w-7,3,i%2?"#65837e":"#607682");rect(x+4,y+6,w-9,h-8,"#476175");
+    if(region==="akkeshi")northernBottom(t);
+    else if(region==="temperate")temperateBottom(t);
+    else atlanticBottom(t);
+    drawBuoy(t);
+    flecks.forEach(f=>{
+      if(f.y<168){
+        const cols=region==="temperate"?["#328d91","#3b9fa0","#307b83"]:
+          region==="atlantic"?["#396f80","#527b88","#3a6274"]:
+          ["#276d80","#2d7681","#316b7d"];
+        rect(f.x+Math.round(Math.sin(t*.4+f.y)*1.2),f.y,1,1,cols[f.c]);
+      }
     });
-    // Sheltering seagrass and broad frond kelp.
-    for(let i=0;i<9;i++)kelp(45+i*8,175,24+(i*19)%50,t,"#348b73");
-    for(let i=0;i<7;i++)kelp(92+i*7,174,20+(i*17)%37,t,"#4b987a");
-    for(let i=0;i<4;i++)kelp(134+i*5,181,34+(i*13)%36,t,"#3f816a");
-    for(let i=0;i<3;i++)kelp(277+i*6,180,31+i*9,t,"#41816f");
-    // Distinct underwater growth: pink branching forms in warmer water,
-    // darker encrusting growth in the northern and Atlantic scenes.
-    if(region==="temperate"){
-      drawCoral(223,163,20,"#e6a6a2");drawCoral(250,168,28,"#e7ba87");
-      drawCoral(268,168,18,"#c19ad1");
-    }else{
-      drawCoral(223,163,14,region==="atlantic"?"#8aa5af":"#9a8796");
-      drawCoral(250,168,19,region==="atlantic"?"#8aa4a0":"#b69a9d");
-      drawCoral(268,168,11,region==="atlantic"?"#7a9b9d":"#8a8295");
-    }
-    for(let i=0;i<8;i++)rect(206+i*8,168+(i%3),4,2,"#866f8b");
-    // Small rope-attached marine growth.
-    for(let i=0;i<8;i++) {
-      const y=55+i*13;
-      rect(310+Math.round(Math.sin(t*.7+i)*2),y,7+(i%3),2,i%2?"#4aa394":"#7bb3a5");
-    }
-    flecks.forEach(f=>{if(f.y<168)rect(f.x+(Math.sin(t*.4+f.y)*1.2),f.y,1,1,["#276d80","#2d7681","#316b7d"][f.c]);});
     bubblesSeed.forEach(b=>{
       const y=((b.y-t*b.v)%210+210)%210;
       const xx=b.x+Math.sin(t*.7+b.phase)*3;
-      ctx.strokeStyle="#a5d5d4";ctx.globalAlpha=.28;ctx.lineWidth=.75;
-      ctx.strokeRect(Math.round(xx),Math.round(y),b.r*2+1,b.r*2+1);ctx.globalAlpha=1;
+      ctx.strokeStyle=region==="temperate"?"#b6ffea":"#a5d5d4";
+      ctx.globalAlpha=region==="atlantic"?.19:.27;ctx.lineWidth=.75;
+      ctx.strokeRect(Math.round(xx),Math.round(y),b.r*2+1,b.r*2+1);
     });
+    ctx.globalAlpha=1;
   }
   function renderCreatures(t) {
     for (const c of creatures) {
@@ -823,12 +949,15 @@
       ctx.drawImage(sprint,-16,-12);
       ctx.restore();
     }
-    // A few foreground stems partially cover amphipods, just like real collecting.
-    for(let i=0;i<4;i++) {
-      const x=82+i*13;
+    // Low-contrast foreground plants subtly reinforce each regional setting.
+    const n=region==="akkeshi"?5:region==="temperate"?4:3;
+    for(let i=0;i<n;i++) {
+      const x=(region==="atlantic"?31:79)+i*(region==="atlantic"?18:13);
       const sway=Math.sin(t*1.2+i)*2;
-      rect(x+sway,176-27-i*5,2,30+i*5,"#4d997f");
-      rect(x-4+sway,151-i*3,8,2,"#61ac8a");
+      const height=region==="atlantic"?24+i*7:28+i*5;
+      const stem=region==="atlantic"?"#64785b":region==="temperate"?"#55ae88":"#4b947e";
+      rect(x+sway,176-height,2,height,stem);
+      rect(x-5+sway,176-height*.62,9,2,stem);
     }
   }
   function drawNet() {
