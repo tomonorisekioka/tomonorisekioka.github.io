@@ -337,6 +337,7 @@
   function regionPool(){return regions[region].species;}
   function switchRegion(id) {
     if(!Object.prototype.hasOwnProperty.call(regions,id)||id===region)return;
+    const keepListening=!!(musicEnabled&&audio&&audio.isPlaying());
     if(audio)audio.stop();
     region=id;
     try{localStorage.setItem(REGION_KEY,region);}catch(_){}
@@ -348,6 +349,8 @@
     ui.play.firstChild.textContent="採集をはじめる ";
     ui.play.querySelector("span").textContent="→";
     updateRegionUI();
+    if(keepListening&&audio)audio.start(region);
+    updateMusicUI();
   }
   function updateRegionUI() {
     const chosen=regions[region];
@@ -361,7 +364,7 @@
     if(label)label.textContent="♪ 8BIT BGM · "+(track?track.title:"BGM");
     const credit=document.getElementById("music-credit");
     if(credit&&track)credit.textContent="♪ "+track.composer+" — "+track.piece+
-      "。パブリックドメイン原曲の旋律をWeb Audioで短い8bitループにアレンジ（録音素材不使用）。採集開始時に再生し、終了・海域変更で停止します。";
+      "。原曲の楽譜を参考にした約2〜3分の8bitアレンジ（録音素材不使用）。採集終了後も聴けます。旋律は一度通したあと停止します。";
   }
   function crownCounts() {
     let largeGold=0,largeSilver=0,miniGold=0;
@@ -441,12 +444,13 @@
   function start() {
     reset();
     state="playing";endAt=performance.now()+RUN_SECONDS*1000;
-    if(musicEnabled&&audio)audio.start(region);
+    if(musicEnabled&&audio&&!audio.isPlaying())audio.start(region);
+    updateMusicUI();
     ui.overlay.hidden=true;canvas.focus({preventScroll:true});
     showToast("そっと近づいて、ずれた先を狙おう。");
   }
   function finish() {
-    if(audio)audio.stop();
+    // Music continues past the 30-second timer: the score lasts 2–3 minutes.
     state="ended"; net=null;ui.overlay.hidden=false;
     ui.kicker.textContent="FIELD REPORT";
     ui.title.textContent=roundFound.size===regionPool().length?"全タイプ採集！":"採集終了！";
@@ -810,12 +814,14 @@
     ctx.imageSmoothingEnabled=false;
     scene(t);renderCreatures(t);drawNet();drawCursor(t);
   }
+  let lastMusicRender=0;
   function frame(now) {
     const dt=Math.min((now-(lastFrame||now))/1000,.035);
     lastFrame=now;
     if(state==="playing")update(dt,now);
     else gameTime+=dt*.55;
     render(now);
+    if(now-lastMusicRender>280){updateMusicUI();lastMusicRender=now;}
     requestAnimationFrame(frame);
   }
 
@@ -847,28 +853,59 @@
     refresh();
   }
 
+  function formatClock(seconds){
+    const sec=Math.max(0,Math.floor(Number(seconds)||0));
+    return String(Math.floor(sec/60))+":"+String(sec%60).padStart(2,"0");
+  }
+  function updateMusicUI(){
+    const control=document.getElementById("music-play");
+    const progress=document.getElementById("music-progress");
+    if(!control)return;
+    const playing=!!(audio&&audio.isPlaying());
+    control.textContent=playing?"■ 曲を停止":"▶ 曲を試聴";
+    control.setAttribute("aria-label",playing?"現在の曲を停止":"選択した海域の曲を最初から再生");
+    control.setAttribute("aria-pressed",String(playing));
+    const duration=audio&&audio.tracks?.[region]?.duration || 0;
+    if(progress)progress.textContent=formatClock(playing?audio.position():0)+" / "+formatClock(duration);
+  }
   function setupMusic(){
     const toggle=document.getElementById("music-toggle");
     const slider=document.getElementById("music-volume");
-    if(!toggle||!slider)return;
+    const player=document.getElementById("music-play");
+    if(!toggle||!slider||!player)return;
     try{
       musicEnabled=localStorage.getItem("ts-amphipod-music-on-v1")!=="false";
       const saved=Number(localStorage.getItem("ts-amphipod-music-volume-v1"));
       if(Number.isFinite(saved)&&saved>=0&&saved<=100&&localStorage.getItem("ts-amphipod-music-volume-v1")!==null)musicVolume=saved;
     }catch(_){}
-    if(!audio||!audio.supported){musicEnabled=false;toggle.disabled=true;toggle.textContent="音声非対応";slider.disabled=true;return;}
+    if(!audio||!audio.supported){
+      musicEnabled=false;toggle.disabled=true;toggle.textContent="音声非対応";
+      slider.disabled=true;player.disabled=true;player.textContent="再生不可";return;
+    }
     const update=()=>{
       toggle.textContent=musicEnabled?"♫ ON":"♫ OFF";
       toggle.setAttribute("aria-pressed",String(musicEnabled));
       toggle.setAttribute("aria-label",musicEnabled?"BGMをミュートする":"BGMをオンにする");
       slider.value=String(musicVolume);
       audio.setVolume(musicVolume/100);
+      updateMusicUI();
     };
+    player.addEventListener("click",()=>{
+      if(audio.isPlaying())audio.stop();
+      else{
+        if(!musicEnabled){
+          musicEnabled=true;
+          try{localStorage.setItem("ts-amphipod-music-on-v1","true");}catch(_){}
+        }
+        audio.start(region);
+      }
+      update();
+    });
     toggle.addEventListener("click",()=>{
       musicEnabled=!musicEnabled;
       try{localStorage.setItem("ts-amphipod-music-on-v1",String(musicEnabled));}catch(_){}
-      if(musicEnabled&&state==="playing")audio.start(region);
-      else if(!musicEnabled)audio.stop();
+      if(!musicEnabled)audio.stop();
+      else if(state==="playing")audio.start(region);
       update();
     });
     slider.addEventListener("input",()=>{
@@ -883,10 +920,9 @@
   ui.play.addEventListener("click",start);
   ui.restart.addEventListener("click",start);
   document.addEventListener("visibilitychange",()=>{
-    if(document.hidden&&state==="playing"){pausedAt=performance.now();if(audio)audio.stop();}
+    if(document.hidden&&state==="playing")pausedAt=performance.now();
     if(!document.hidden&&pausedAt&&state==="playing"){
       endAt+=performance.now()-pausedAt;pausedAt=0;lastFrame=performance.now();
-      if(audio&&musicEnabled)audio.start(region);
     }
   });
   document.querySelectorAll("[data-region]").forEach(button=>{
