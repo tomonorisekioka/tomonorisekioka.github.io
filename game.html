@@ -19,7 +19,8 @@
   </script>
   <link rel="stylesheet" href="style.css?v=20261017-dark1">
   <link rel="stylesheet" href="game.css?v=20261017-regions1">
-  <script defer src="game.js?v=20261017-eohaustorius1"></script>
+  <script defer src="game-music.js?v=20261017-morning1"></script>
+  <script defer src="game.js?v=20261017-lysianassoid1"></script>
 </head>
 <body>
   <a class="skip-link" href="#play">ゲームへスキップ</a>
@@ -46,7 +47,7 @@
       <div>
         <p class="eyebrow">THREE COASTS · A PIXEL FIELD TRIP</p>
         <h1>ヨコエビ採集日和 <span>AMPHIPOD HUNT</span></h1>
-        <p class="game-subtitle">厚岸・日本の温帯沿岸・北大西洋。海域ごとに変わるヨコエビの顔ぶれ。<br>「つかまえた！」と思った次の瞬間、するり。<br>31タイプ、サイズいろいろ。珍しい個体には金冠・銀冠も。</p>
+        <p class="game-subtitle">厚岸・日本の温帯沿岸・北大西洋。海域ごとに変わるヨコエビの顔ぶれ。<br>「つかまえた！」と思った次の瞬間、するり。<br>36タイプ、サイズいろいろ。珍しい個体には金冠・銀冠も。</p>
       </div>
       <p class="game-stamp">PIXEL FIELD NOTE <span>no. 001</span></p>
     </div>
@@ -58,12 +59,18 @@
           <button type="button" data-region="temperate" aria-pressed="false">☀ 日本・温帯沿岸</button>
           <button type="button" data-region="atlantic" aria-pressed="false">◈ 北大西洋</button>
         </div>
-        <p id="region-description">亜寒帯と温帯の境界をイメージした海 · 24タイプが出現</p>
+        <p id="region-description">亜寒帯と温帯の境界をイメージした海 · 29タイプが出現</p>
+        <div class="music-controls" role="group" aria-label="BGM設定">
+          <span class="music-label">♪ 8BIT BGM · グリーグ「朝」</span>
+          <button type="button" id="music-toggle" aria-pressed="true" aria-label="BGMをミュートする">♫ ON</button>
+          <label for="music-volume">音量</label>
+          <input type="range" id="music-volume" min="0" max="100" value="26" step="1" aria-label="BGMの音量">
+        </div>
       </div>
       <div class="game-bar">
         <div class="game-stat"><span>TIME</span><strong id="time-display">00:30</strong></div>
         <div class="game-stat"><span>CAUGHT</span><strong id="catch-display">0</strong></div>
-        <div class="game-stat"><span>TYPES</span><strong id="species-display">0 / 24</strong></div>
+        <div class="game-stat"><span>TYPES</span><strong id="species-display">0 / 29</strong></div>
         <div class="game-stat"><span>CROWNS</span><strong id="crown-display">♛ 0</strong></div>
         <div class="game-stat game-stat-action"><button class="game-small-button" type="button" id="restart-button">↻ やり直す</button></div>
       </div>
@@ -107,6 +114,7 @@
       </div>
       <div class="collection-grid" id="collection-grid" aria-label="選択した海域の採集図鑑"></div>
       <p class="collection-note">冠は各タイプの標準サイズに対するゲーム内倍率で判定しています（実測体長ではありません）。図鑑のサイズ記録・冠は海域ごとに分けてこのブラウザに保存されます。このゲームは厚岸・日本の温帯沿岸・北大西洋をイメージしたフィクションで、日本語名は確認できた属・科の和名を優先し、それ以外は「ゲーム内呼称」と区別しています。姿・生息場所はゲーム向けにデフォルメしており、各海域の出演属は厳密な現地採集リストではなく、同所的な出現や生息分布を証明するものではありません。</p>
+      <p class="music-credit">♪ BGM: Edvard Grieg, <i>Morning Mood</i> from <i>Peer Gynt</i> — パブリックドメイン原曲をWeb Audioで8bitアレンジ（録音素材不使用）。BGMは採集開始後に再生され、いつでもミュートできます。</p>
     </section>
   </main>
   <footer class="footer"><div class="wrap footer-inner"><span>© 2026 Tomonori Sekioka · A tiny interactive field note</span><a href="index.html">研究者サイトに戻る ↗</a></div></footer>
