@@ -111,3 +111,9 @@
 .music-credit{font-size:11px;line-height:1.7;color:var(--muted);margin-top:15px}
 .specimen-group{font-size:9px!important;line-height:1.4!important;letter-spacing:.035em;color:var(--accent)!important;font-weight:750;margin-top:7px!important}
 @media(max-width:640px){.music-controls{gap:7px}.music-label{flex-basis:100%}.music-controls input[type="range"]{width:96px}.music-credit{font-size:10px}.specimen-group{font-size:8px!important}}
+
+/* Long-form soundtrack controls */
+.music-controls #music-play{background:var(--accent);color:var(--bg);border-color:var(--accent);min-width:104px}
+.music-controls #music-play[aria-pressed="true"]{background:var(--surface);color:var(--accent)}
+.music-progress{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:76px;white-space:nowrap}
+@media(max-width:640px){.music-controls #music-play{min-width:95px}.music-progress{font-size:10px;min-width:70px}}
