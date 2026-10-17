@@ -8,7 +8,7 @@
   const canvas = document.getElementById("sea");
   if (!canvas) return;
   const ctx = canvas.getContext("2d", { alpha: false });
-  const W = 360, H = 210, RUN_SECONDS = 90;
+  const W = 360, H = 210, RUN_SECONDS = 30;
   canvas.width = W; canvas.height = H;
   ctx.imageSmoothingEnabled = false;
 
@@ -105,7 +105,7 @@
     caught = 0;discovered = new Set();gameTime = 0;net = null;pausedAt=0;
     creatures = [];shots=[];particles=[];
     for(let kind=0;kind<kinds.length;kind++)for(let i=0;i<3;i++)creatures.push(makeCreature(kind,i));
-    ui.time.textContent="01:30";ui.caught.textContent="0";ui.species.textContent="0 / 6";
+    ui.time.textContent="00:30";ui.caught.textContent="0";ui.species.textContent="0 / 6";
     renderCollection();
     pointer.active=false;pointer.speed=0;
   }
