@@ -277,7 +277,11 @@
           const n=Number(key);
           if(!Number.isInteger(n)||n<0||n>=SPECIES_TOTAL||REASSIGNED_SLOTS.has(n))continue;
           const rec=sanitizeRecord(item);
-          if(rec)allRecords.akkeshi[n]=rec;
+          if(rec){
+            // Keep a legacy record in the first region where its unchanged genus appears.
+            const destination=Object.keys(regions).find(id=>regions[id].species.includes(n));
+            if(destination)allRecords[destination][n]=rec;
+          }
         }
         try{localStorage.setItem(REGIONAL_RECORDS_KEY,JSON.stringify(allRecords));}catch(_){}
       }
