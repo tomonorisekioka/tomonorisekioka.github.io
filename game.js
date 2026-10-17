@@ -1112,8 +1112,10 @@
   ui.play.addEventListener("click",event=>{
     // Keyboard activation is always deliberate. Touch activation after a round
     // requires a pause; rapid taps through the game-over transition are ignored.
+    // Some mobile browsers synthesize a mouse-like click after touch input.
+    // The very recent stage touch is the more reliable cross-browser signal.
     const touchClick=event.pointerType==="touch" ||
-      (!event.pointerType&&latestInputType==="touch"&&event.detail!==0);
+      (event.detail!==0&&latestInputType==="touch"&&performance.now()-lastStageTouchAt<650);
     if(state==="ended"&&touchClick&&!restartTouchEligible){
       if(ui.hint)ui.hint.textContent="連打による誤操作を防いでいます。少し間を置いてタップしてね。";
       return;
