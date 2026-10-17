@@ -49,6 +49,7 @@
 - IMSLPの[ファイルNo.517383](https://imslp.org/wiki/Special:ReverseLookup/517383)は **Choudens初版（1877年頃、plate A.C.3795）の復刻**。1994年Könemann再刊（K 1005）。IMSLP上の表記は **Public Domain**。
 - 14ページを抜粋した照合用の譜面を作成（スキャン画像自体は改変しない）。原典の歌唱譜・オーケストレーションの構造と照合可能になった。
 - **監査結果：原典入手済み／音符データの完全な独自採譜は未実施。** 現在のゲームには引き続きSystème Gのデータが残っている。原典を入手した事実だけで、そのデータの再利用条件が明確になったとは扱わない。
+- **2026-10-17 作業進捗**：原典p.216の歌唱開始2小節について、音高・音価・休符を独立に読み取り、4/4の拍数検査とMIDI/MusicXML・試聴音源の試作を実施。2小節目の装飾音・タイ・臨時記号は未検証で、**全曲採譜・公開音源差し替えは未完了**。経過は [research/carmen-original-score-progress.md](research/carmen-original-score-progress.md) に記録。
 - 注意：以前のプログラムコメントには、Mutopia Project の **Carmen Prelude（CC BY-SA 2.5）**を音符の直接の出典とする誤記がありました。現在のこの曲のデータは **MutopiaのPrelude譜面を使用していません**。その誤記は修正しました。
 
 ## 現状の整理
