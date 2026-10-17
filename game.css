@@ -16,7 +16,7 @@
 .game-small-button:hover{border-color:var(--accent);color:var(--accent)}
 .game-small-button:focus-visible,.game-start:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 .sea-stage{position:relative;overflow:hidden;background:#0a3a55;line-height:0;user-select:none;-webkit-user-select:none}
-.sea-stage canvas{width:100%;height:auto;aspect-ratio:12/7;image-rendering:pixelated;image-rendering:crisp-edges;display:block;cursor:crosshair;touch-action:manipulation;outline:none}
+.sea-stage canvas{width:100%;height:auto;aspect-ratio:12/7;image-rendering:pixelated;image-rendering:crisp-edges;display:block;cursor:crosshair;touch-action:none;outline:none}
 .sea-stage canvas:focus-visible{outline:3px solid #ffdf91;outline-offset:-4px}
 .game-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(4,29,43,.40);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);line-height:1.7}
 .game-overlay[hidden]{display:none}
