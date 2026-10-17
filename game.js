@@ -219,7 +219,7 @@
     return buffer;
   });
 
-  let state = "ready", caught = 0, discovered = new Set(), roundFound = new Set(), records = {};
+  let state = "ready", caught = 0, discovered = new Set(), roundFound = new Set(), records = {}, allRecords = {}, region = "akkeshi";
   let creatures = [], shots = [], particles = [], bubbles = [];
   let gameTime = 0, endAt = 0, lastFrame = 0, pausedAt = 0;
   let nextId = 0, toastUntil = 0;
@@ -238,34 +238,86 @@
       fleeX:Math.random()>.5?1:-1,fleeY:0,phase:rand(0,7),shiver:0,shiverPower:1,hidden:0,
       escapeGlow:0,wander:rand(0,7)};
   }
+  function sanitizeRecord(item) {
+    if(!item || typeof item!=="object" || !(Number(item.count)>0))return null;
+    const big=Number(item.big),small=Number(item.small);
+    return {
+      count:Math.max(1,Math.floor(Number(item.count))),
+      big:Number.isFinite(big)?clamp(big,.5,2):1,
+      small:Number.isFinite(small)?clamp(small,.5,2):1,
+      large:item.large==="gold"?"gold":item.large==="silver"?"silver":"",
+      mini:item.mini===true
+    };
+  }
   function loadRecords() {
     try{
-      // Earlier records were indexed by specimen slot. Replacing a genus must not
-      // silently transfer its crowns to a different genus occupying the same slot.
-      const current=localStorage.getItem(RECORD_KEY);
-      const migrating=current===null;
-      const saved=JSON.parse(current || localStorage.getItem(LEGACY_RECORD_KEY) || "{}");
-      if(saved&&typeof saved==="object"&&!Array.isArray(saved)){
-        for(const [key,item] of Object.entries(saved)){
-          const n=Number(key);
-          if(!Number.isInteger(n)||n<0||n>=SPECIES_TOTAL||!item||typeof item!=="object")continue;
-          if(migrating&&RENAMED_SLOTS.has(n))continue;
-          const count=Number(item.count)||0,big=Number(item.big)||0,small=Number(item.small)||0;
-          if(count<=0)continue;
-          records[n]={
-            count:Math.max(1,Math.floor(count)),
-            big:clamp(big,.5,2),small:clamp(small,.5,2),
-            large:item.large==="gold"?"gold":item.large==="silver"?"silver":"",
-            mini:item.mini===true
-          };
-          discovered.add(n);
+      const saved=JSON.parse(localStorage.getItem(REGIONAL_RECORDS_KEY)||"null");
+      if(saved&&typeof saved==="object"&&!Array.isArray(saved)) {
+        for(const id of Object.keys(regions)){
+          const raw=saved[id];
+          allRecords[id]={};
+          if(raw&&typeof raw==="object"){
+            for(const [key,item] of Object.entries(raw)){
+              const n=Number(key);
+              if(!Number.isInteger(n)||n<0||n>=SPECIES_TOTAL)continue;
+              const rec=sanitizeRecord(item);
+              if(rec)allRecords[id][n]=rec;
+            }
+          }
         }
+      }else{
+        // Legacy NW Pacific collection: import unchanged genus slots into Akkeshi once.
+        // The three replaced slots have NEW genus names and must not inherit old crowns.
+        const legacy=JSON.parse(localStorage.getItem(LEGACY_RECORD_KEY_V3)
+          ||localStorage.getItem(RECORD_KEY)
+          ||localStorage.getItem(LEGACY_RECORD_KEY)
+          ||"{}");
+        allRecords={akkeshi:{},temperate:{},atlantic:{}};
+        for(const [key,item] of Object.entries(legacy||{})){
+          const n=Number(key);
+          if(!Number.isInteger(n)||n<0||n>=SPECIES_TOTAL||REASSIGNED_SLOTS.has(n))continue;
+          const rec=sanitizeRecord(item);
+          if(rec)allRecords.akkeshi[n]=rec;
+        }
+        try{localStorage.setItem(REGIONAL_RECORDS_KEY,JSON.stringify(allRecords));}catch(_){}
       }
-      if(migrating)saveRecords(); // Keep the 25 unchanged genus records in v3.
-    }catch(_){/* Game still runs in private browsing or when storage is blocked. */}
+    }catch(_){allRecords={akkeshi:{},temperate:{},atlantic:{}};}
+    for(const id of Object.keys(regions))allRecords[id] ||= {};
+    try{
+      const chosen=localStorage.getItem(REGION_KEY);
+      if(chosen && Object.prototype.hasOwnProperty.call(regions,chosen))region=chosen;
+    }catch(_){}
+    activateRegionRecords();
+  }
+  function activateRegionRecords() {
+    records=allRecords[region]||{};
+    discovered=new Set(Object.keys(records).map(Number));
   }
   function saveRecords() {
-    try{localStorage.setItem(RECORD_KEY,JSON.stringify(records));}catch(_){}
+    allRecords[region]=records;
+    try{localStorage.setItem(REGIONAL_RECORDS_KEY,JSON.stringify(allRecords));}catch(_){}
+  }
+  function regionPool(){return regions[region].species;}
+  function switchRegion(id) {
+    if(!Object.prototype.hasOwnProperty.call(regions,id)||id===region)return;
+    region=id;
+    try{localStorage.setItem(REGION_KEY,region);}catch(_){}
+    activateRegionRecords();reset();
+    state="ready";ui.overlay.hidden=false;
+    ui.kicker.textContent="READY TO DIVE?";
+    ui.title.textContent=regions[region].label+"の海へ";
+    ui.text.textContent="場所が変われば、顔ぶれも変わる。ゆっくり近づき、30秒で何タイプ採集できる？";
+    ui.play.firstChild.textContent="採集をはじめる ";
+    ui.play.querySelector("span").textContent="→";
+    updateRegionUI();
+  }
+  function updateRegionUI() {
+    const chosen=regions[region];
+    const text=document.getElementById("region-description");
+    if(text)text.textContent=chosen.subtitle+" · "+chosen.species.length+"タイプが出現（地域別の架空の組み合わせ）";
+    document.querySelectorAll("[data-region]").forEach(button=>{
+      button.setAttribute("aria-pressed",String(button.dataset.region===region));
+    });
   }
   function crownCounts() {
     let largeGold=0,largeSilver=0,miniGold=0;
@@ -283,11 +335,13 @@
   function reset() {
     caught=0;roundFound=new Set();gameTime=0;net=null;pausedAt=0;
     creatures=[];shots=[];particles=[];
-    // One of each morphotype is present; eight more randomly chosen are roaming.
-    // Unlike 3 copies per type, this keeps thirty types visible without filling the sea.
-    for(let kind=0;kind<SPECIES_TOTAL;kind++)creatures.push(makeCreature(kind));
-    for(let i=0;i<8;i++)creatures.push(makeCreature(Math.floor(Math.random()*SPECIES_TOTAL),1));
-    ui.time.textContent="00:30";ui.caught.textContent="0";ui.species.textContent="0 / "+SPECIES_TOTAL;
+    // Only morphotypes curated for the selected region may spawn.
+    const pool=regionPool();
+    for(const kind of pool)creatures.push(makeCreature(kind));
+    for(let i=0;i<Math.min(7,pool.length);i++){
+      creatures.push(makeCreature(pool[Math.floor(Math.random()*pool.length)],1));
+    }
+    ui.time.textContent="00:30";ui.caught.textContent="0";ui.species.textContent="0 / "+pool.length;
     updateCrownDisplay();renderCollection();
     pointer.active=false;pointer.speed=0;
   }
@@ -296,8 +350,8 @@
   }
   function renderCollection() {
     ui.grid.textContent="";
-    kinds.forEach((k,i)=>{
-      const found=discovered.has(i),rec=records[i];
+    regionPool().forEach(i=>{
+      const k=kinds[i],found=discovered.has(i),rec=records[i];
       const item=document.createElement("article");item.className="specimen"+(found?" found":"");
       const art=document.createElement("div");art.className="specimen-art";
       if(found){
@@ -332,7 +386,7 @@
       item.append(art,info);ui.grid.appendChild(item);
     });
     const c=crownCounts();
-    ui.progress.textContent=discovered.size+" / "+SPECIES_TOTAL+"タイプ採集済み · 大型金 "+c.largeGold+" / 大型銀 "+c.largeSilver+" / ミニ金 "+c.miniGold;
+    ui.progress.textContent=discovered.size+" / "+regionPool().length+"タイプ採集済み · 大型金 "+c.largeGold+" / 大型銀 "+c.largeSilver+" / ミニ金 "+c.miniGold;
   }
   function start() {
     reset();
@@ -343,8 +397,8 @@
   function finish() {
     state="ended"; net=null;ui.overlay.hidden=false;
     ui.kicker.textContent="FIELD REPORT";
-    ui.title.textContent=roundFound.size===SPECIES_TOTAL?"全種類採集！":"採集終了！";
-    ui.text.textContent="今回 "+caught+"個体・"+roundFound.size+"/"+SPECIES_TOTAL+"タイプ。図鑑の採集記録と冠は次回も残るよ。";
+    ui.title.textContent=roundFound.size===regionPool().length?"全タイプ採集！":"採集終了！";
+    ui.text.textContent="今回 "+caught+"個体・"+roundFound.size+"/"+regionPool().length+"タイプ。図鑑の採集記録と冠は次回も残るよ。";
     ui.play.firstChild.textContent="もう一度採集する ";
     ui.play.querySelector("span").textContent="↻";
   }
@@ -490,7 +544,7 @@
         const name=kinds[c.kind].japanese;
         showToast("GET! "+name+" "+c.ratio.toFixed(2)+"×"+(firstCrown?" "+firstCrown:""));
         ui.caught.textContent=String(caught);
-        ui.species.textContent=roundFound.size+" / "+SPECIES_TOTAL;
+        ui.species.textContent=roundFound.size+" / "+regionPool().length;
         updateCrownDisplay();renderCollection();
         // More amphipods remain at the habitat for another try.
         const id=c.id,kind=c.kind;
@@ -739,5 +793,8 @@
       endAt+=performance.now()-pausedAt;pausedAt=0;lastFrame=performance.now();
     }
   });
-  setupTheme();loadRecords();reset();requestAnimationFrame(frame);
+  document.querySelectorAll("[data-region]").forEach(button=>{
+    button.addEventListener("click",()=>switchRegion(button.dataset.region));
+  });
+  setupTheme();loadRecords();reset();updateRegionUI();requestAnimationFrame(frame);
 })();
