@@ -2,8 +2,9 @@
    Composer works: Grieg, Satie, Bizet (public domain under Japanese law).
    Score-data origins, including rights not yet fully established, are
    documented in MUSIC_SOURCES.md and game-music-data.js.
-   NOTE: The Bizet full aria data is from CostardRouge/system-g,
-   NOT Mutopia's separately licensed Carmen Prelude transcription.
+   Bizet's Toreador source is now the 22-track PDMX/MuseScore MIDI,
+   credited in game-carmen-pdmx.js. Source license reported as CC0 by
+   mirror; PDMX internal license-conflict flag is still unverified.
 */
 (() => {
   "use strict";
