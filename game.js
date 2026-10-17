@@ -364,7 +364,9 @@
     if(label)label.textContent="♪ 8BIT BGM · "+(track?track.title:"BGM");
     const credit=document.getElementById("music-credit");
     if(credit&&track)credit.textContent="♪ "+track.composer+" — "+track.piece+
-      "。原曲の楽譜を参考にした約2〜3分の8bitアレンジ（録音素材不使用）。採集終了後も聴けます。旋律は一度通したあと停止します。";
+      "。原曲の譜面・採譜データに基づく約3分の8bit演奏（録音素材不使用）。採集終了後も続き、最後まで演奏します。";
+    const chorus=document.getElementById("music-refrain");
+    if(chorus)chorus.hidden=region!=="atlantic";
   }
   function crownCounts() {
     let largeGold=0,largeSilver=0,miniGold=0;
@@ -872,6 +874,7 @@
     const toggle=document.getElementById("music-toggle");
     const slider=document.getElementById("music-volume");
     const player=document.getElementById("music-play");
+    const chorus=document.getElementById("music-refrain");
     if(!toggle||!slider||!player)return;
     try{
       musicEnabled=localStorage.getItem("ts-amphipod-music-on-v1")!=="false";
@@ -899,6 +902,15 @@
         }
         audio.start(region);
       }
+      update();
+    });
+    if(chorus)chorus.addEventListener("click",()=>{
+      if(region!=="atlantic"||!audio?.supported)return;
+      if(!musicEnabled){
+        musicEnabled=true;
+        try{localStorage.setItem("ts-amphipod-music-on-v1","true");}catch(_){}
+      }
+      audio.start("atlantic",audio.tracks.atlantic.chorusAt||0);
       update();
     });
     toggle.addEventListener("click",()=>{
