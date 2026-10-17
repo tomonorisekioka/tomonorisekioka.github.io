@@ -22,6 +22,7 @@
     time: document.getElementById("time-display"),
     caught: document.getElementById("catch-display"),
     species: document.getElementById("species-display"),
+    crowns: document.getElementById("crown-display"),
     toast: document.getElementById("game-toast"),
     grid: document.getElementById("collection-grid"),
     progress: document.getElementById("collection-progress")
