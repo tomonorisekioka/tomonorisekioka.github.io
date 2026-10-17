@@ -1,0 +1,56 @@
+/* The marine mini-game follows the same light/dark tokens as the researcher site. */
+.game-main{max-width:1100px;padding-top:60px;padding-bottom:90px}
+.game-heading{display:flex;align-items:end;justify-content:space-between;gap:28px;margin-bottom:32px}
+.game-heading h1{margin:14px 0 18px;font-size:clamp(32px,4vw,50px);letter-spacing:-.045em;line-height:1.3}
+.game-heading h1 span{display:block;margin-top:7px;font-size:clamp(15px,1.8vw,22px);letter-spacing:.14em;color:var(--accent);font-weight:600}
+.game-subtitle{margin:0;color:var(--muted);font-size:15px;line-height:1.95}
+.game-stamp{flex:none;align-self:flex-start;margin:30px 0 0;padding:11px 16px;border:1px solid var(--line);border-radius:4px;color:var(--accent);font-size:10px;letter-spacing:.14em;font-weight:750;text-align:center;transform:rotate(4deg)}
+.game-stamp span{display:block;font-size:16px;letter-spacing:.07em;color:var(--ink);font-weight:600}
+.game-station{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface);box-shadow:0 20px 48px rgba(3,23,31,.09)}
+.game-bar{display:flex;align-items:stretch;min-height:80px;border-bottom:1px solid var(--line)}
+.game-stat{padding:17px 26px;border-right:1px solid var(--line);min-width:140px}
+.game-stat span{display:block;font-size:10px;font-weight:780;color:var(--accent);letter-spacing:.16em}
+.game-stat strong{display:block;margin-top:4px;font-size:25px;line-height:1.25;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.game-stat-action{display:flex;align-items:center;justify-content:flex-end;flex:1;border-right:none}
+.game-small-button{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:10px 13px;border-radius:4px;font:inherit;font-weight:700;font-size:12px;cursor:pointer}
+.game-small-button:hover{border-color:var(--accent);color:var(--accent)}
+.game-small-button:focus-visible,.game-start:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.sea-stage{position:relative;overflow:hidden;background:#0a3a55;line-height:0;user-select:none;-webkit-user-select:none}
+.sea-stage canvas{width:100%;height:auto;aspect-ratio:12/7;image-rendering:pixelated;image-rendering:crisp-edges;display:block;cursor:crosshair;touch-action:manipulation;outline:none}
+.sea-stage canvas:focus-visible{outline:3px solid #ffdf91;outline-offset:-4px}
+.game-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(4,29,43,.40);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);line-height:1.7}
+.game-overlay[hidden]{display:none}
+.overlay-card{width:min(420px,95%);max-height:100%;overflow:auto;padding:27px 33px 25px;text-align:center;border:2px solid rgba(178,237,232,.5);background:rgba(7,35,51,.94);box-shadow:0 13px 55px rgba(0,0,0,.27);color:#f0faf9;border-radius:4px}
+.overlay-eyebrow{font-size:10px;letter-spacing:.22em;color:#89d9cd;font-weight:780}
+.overlay-card h2{margin:9px 0 10px;font-size:clamp(20px,2.4vw,28px);line-height:1.4;letter-spacing:-.02em}
+.overlay-card p{font-size:13px;color:#d4e9e8;line-height:1.85;margin:0 0 21px}
+.game-start{width:100%;max-width:280px;display:flex;justify-content:space-between;align-items:center;gap:16px;margin:0 auto 12px;padding:11px 17px;border:0;border-radius:3px;background:#a3ede3;color:#0d323c;font:inherit;font-size:15px;font-weight:800;cursor:pointer}
+.game-start:hover{background:#c5fff5}
+.overlay-card .overlay-small{font-size:11px;letter-spacing:.05em;color:#a5c5cc;margin:0}
+.game-toast{position:absolute;pointer-events:none;bottom:12%;left:50%;transform:translate(-50%,8px);padding:7px 15px;border:1px solid rgba(171,242,217,.5);border-radius:30px;background:rgba(4,31,44,.8);color:#d4fff4;font-size:13px;font-weight:750;letter-spacing:.035em;line-height:1.5;opacity:0;transition:opacity .15s ease,transform .15s ease;text-align:center;white-space:nowrap;max-width:90%;overflow:hidden;text-overflow:ellipsis}
+.game-toast.visible{transform:translate(-50%,0);opacity:1}
+.game-bottom{display:flex;justify-content:space-between;gap:18px;padding:13px 20px;background:var(--surface);font-size:12px;color:var(--muted);line-height:1.7}
+.sea-indicator{display:inline-block;width:7px;height:7px;border-radius:50%;background:#5fb7ad;box-shadow:0 0 0 4px rgba(95,183,173,.13);margin-right:10px}
+.game-guide{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:52px;padding:72px 0 60px;border-bottom:1px solid var(--line)}
+.game-guide h2,.collection h2{font-size:clamp(24px,2.7vw,31px);margin:10px 0 19px;line-height:1.4;letter-spacing:-.03em}
+.game-guide p:not(.section-number){max-width:570px;color:var(--muted);margin:0;line-height:1.95;font-size:14px}
+.guide-tips{align-self:center;border-top:1px solid var(--line)}
+.guide-tips p{display:flex;gap:17px;padding:17px 0;border-bottom:1px solid var(--line);color:var(--ink)!important;font-size:14px!important}
+.guide-tips p strong{color:var(--accent)}
+.collection{padding-top:58px}
+.collection-heading{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:26px}
+.collection-heading h2{margin-bottom:0}
+.collection-heading h2 span{font-size:13px;color:var(--muted);font-weight:500;letter-spacing:.15em;white-space:nowrap;margin-left:7px}
+.collection-heading>p{margin:0 0 4px;color:var(--muted);font-size:13px}
+.collection-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.specimen{display:flex;align-items:center;gap:12px;min-height:82px;padding:15px;border:1px solid var(--line);border-radius:5px;background:var(--surface);opacity:.57;transition:opacity .18s,border-color .18s}
+.specimen.found{opacity:1;border-color:var(--accent)}
+.specimen-art{display:flex;align-items:center;justify-content:center;flex:none;width:51px;height:45px;border:1px solid var(--line);border-radius:3px;background:var(--pale);font-family:monospace;font-size:25px;line-height:1;color:var(--muted);overflow:hidden}
+.specimen-art canvas{width:48px;height:36px;image-rendering:pixelated}
+.specimen-copy{min-width:0}
+.specimen-copy strong{display:block;font-size:13px;line-height:1.45;overflow-wrap:anywhere}
+.specimen-copy p{font-size:11px;color:var(--muted);margin:4px 0 0;line-height:1.5}
+.collection-note{color:var(--muted);font-size:12px;line-height:1.8;margin-top:25px}
+@media(max-width:900px){.game-stat{min-width:115px;padding:15px 19px}.game-stamp{display:none}.collection-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.game-main{padding-top:35px;padding-bottom:55px}.game-heading{margin-bottom:22px}.game-heading h1{font-size:31px}.game-subtitle{font-size:13px}.game-bar{min-height:61px;flex-wrap:wrap}.game-stat{min-width:0;flex:1 1 30%;padding:9px 12px}.game-stat strong{font-size:20px}.game-stat-action{flex:1 0 100%;padding:7px 10px;justify-content:flex-end;border-top:1px solid var(--line)}.game-small-button{font-size:11px;padding:6px 10px}.game-bottom{flex-direction:column;gap:3px;font-size:10px;padding:10px 13px}.overlay-card{padding:16px 15px 14px}.overlay-card h2{font-size:19px}.overlay-card p{font-size:11px;margin-bottom:11px}.game-start{font-size:12px;padding:8px 11px}.overlay-card .overlay-small{font-size:9px}.game-toast{bottom:5%;font-size:11px}.game-guide{grid-template-columns:1fr;gap:28px;padding:48px 0 43px}.collection{padding-top:40px}.collection-heading{align-items:start;flex-direction:column;gap:9px}.collection-grid{grid-template-columns:1fr 1fr;gap:8px}.specimen{flex-direction:column;align-items:flex-start;gap:7px;min-height:114px;padding:10px}.specimen-art{width:42px;height:33px}.specimen-art canvas{width:39px;height:29px}.specimen-copy strong{font-size:11px}.specimen-copy p{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.specimen,.game-toast{transition:none}}
