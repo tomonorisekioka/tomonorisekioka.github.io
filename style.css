@@ -58,3 +58,16 @@
 @media(max-width:820px){.nav{flex-wrap:wrap}.nav nav{margin-left:auto}.theme-menu{margin-left:12px}}
 @media(max-width:640px){.nav{align-items:center}.nav nav{order:3;width:100%;max-width:none;justify-content:flex-start;margin-left:0}.theme-menu{margin-left:auto}.theme-menu summary{min-width:78px;padding:6px 8px}.theme-options{width:186px}}
 @media(prefers-reduced-motion:no-preference){body,.site-header,.theme-menu summary,.secondary,.primary,.footer{transition:background-color .16s ease,color .16s ease,border-color .16s ease}}
+
+/* Mini-game entrance within the photo gallery */
+.game-feature{display:flex;align-items:center;gap:21px;margin-top:30px;padding:20px 22px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);text-decoration:none;transition:border-color .18s,transform .18s,background-color .18s}
+.game-feature:hover{border-color:var(--accent);background:var(--pale);transform:translateY(-1px)}
+.game-feature:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.game-feature-icon{flex:none;display:flex;align-items:center;justify-content:center;gap:3px;width:83px;height:66px;border-radius:3px;background:#123c56;color:#81beb3;font-family:monospace;font-size:18px;letter-spacing:-.05em}
+.game-feature-icon span{color:#ebc59e;font-size:24px;transform:rotate(-14deg)}
+.game-feature-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:2px}
+.game-feature-label{color:var(--accent);font-size:10px;font-weight:760;letter-spacing:.13em}
+.game-feature-copy strong{font-size:19px;font-weight:760;line-height:1.4}
+.game-feature-copy>span:last-child{font-size:12px;line-height:1.65;color:var(--muted)}
+.game-feature-link{flex:none;font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--accent)}
+@media(max-width:640px){.game-feature{gap:12px;padding:14px}.game-feature-icon{width:49px;height:53px;font-size:11px}.game-feature-icon span{font-size:18px}.game-feature-copy strong{font-size:15px}.game-feature-label{font-size:9px}.game-feature-link{font-size:10px}}
