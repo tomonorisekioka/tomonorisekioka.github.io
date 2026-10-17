@@ -626,8 +626,9 @@
     rect(x-4,y-2,23,3,"#98667b");
   }
   function scene(t) {
-    rect(0,0,W,H,"#0b4260");
-    for(let y=0;y<170;y+=5)rect(0,y,W,5,y<20?"#176482":y<65?"#125a77":y<120?"#0e4b6b":"#0b405f");
+    const colors=regions[region].water;
+    rect(0,0,W,H,colors[0]);
+    for(let y=0;y<170;y+=5)rect(0,y,W,5,y<20?colors[0]:y<65?colors[1]:y<120?colors[2]:colors[3]);
     // Fine horizontal light broken into water pixels.
     for(let i=0;i<25;i++) {
       const x=(i*79+17)%362,y=(i*37)%122+7;
@@ -652,10 +653,11 @@
     rect(301,21,25,6,"#ffe3a5");rect(302,29,23,7,"#e98650");
     rect(310,12,8,5,"#f5eee0");rect(312,9,4,3,"#6f8b93");
     rect(299,34,29,3,"#283f4f");
-    // Sand floor.
+    // Sand floor — colors shift subtly with the region.
+    const sandTone=regions[region].sand;
     for(let x=0;x<W;x+=3){const h=174+Math.round(Math.sin(x*.039)*4+Math.cos(x*.093)*2);
-      rect(x,h,4,H-h,"#b89a73");
-      rect(x,h+3,4,H-h-3,"#c5a77b");
+      rect(x,h,4,H-h,sandTone);
+      rect(x,h+3,4,H-h-3,region==="temperate"?"#d9bd8d":region==="atlantic"?"#b9b0a2":"#c5a77b");
     }
     for(let i=0;i<90;i++){
       const x=(i*73+19)%360,y=183+(i*17)%24;
@@ -670,8 +672,16 @@
     for(let i=0;i<7;i++)kelp(92+i*7,174,20+(i*17)%37,t,"#4b987a");
     for(let i=0;i<4;i++)kelp(134+i*5,181,34+(i*13)%36,t,"#3f816a");
     for(let i=0;i<3;i++)kelp(277+i*6,180,31+i*9,t,"#41816f");
-    // Branching pink/orange coral clusters.
-    drawCoral(223,163,20,"#cf8f97");drawCoral(250,168,28,"#d69c86");drawCoral(268,168,18,"#ba8da3");
+    // Distinct underwater growth: pink branching forms in warmer water,
+    // darker encrusting growth in the northern and Atlantic scenes.
+    if(region==="temperate"){
+      drawCoral(223,163,20,"#e6a6a2");drawCoral(250,168,28,"#e7ba87");
+      drawCoral(268,168,18,"#c19ad1");
+    }else{
+      drawCoral(223,163,14,region==="atlantic"?"#8aa5af":"#9a8796");
+      drawCoral(250,168,19,region==="atlantic"?"#8aa4a0":"#b69a9d");
+      drawCoral(268,168,11,region==="atlantic"?"#7a9b9d":"#8a8295");
+    }
     for(let i=0;i<8;i++)rect(206+i*8,168+(i%3),4,2,"#866f8b");
     // Small rope-attached marine growth.
     for(let i=0;i<8;i++) {
