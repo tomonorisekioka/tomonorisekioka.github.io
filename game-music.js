@@ -1,9 +1,9 @@
-/* WebAudio 8-bit synthesizer for three extended classical game arrangements.
-   Composition sources: public-domain Grieg, Satie and Bizet scores.
-   The Toreador theme is the real "Toréador en garde!" refrain as printed in
-   Bizet's Carmen Prelude (Mutopia piano transcription by Alex O'S, CC BY-SA 2.5).
-   The separate game-music-data.js contains the transcribed/arranged notes.
-   The music is synthesized in-browser; there are no sampled recordings.
+/* 8-bit Web Audio synthesizer, without any sampled/third-party recording.
+   Composer works: Grieg, Satie, Bizet (public domain under Japanese law).
+   Score-data origins, including rights not yet fully established, are
+   documented in MUSIC_SOURCES.md and game-music-data.js.
+   NOTE: The Bizet full aria data is from CostardRouge/system-g,
+   NOT Mutopia's separately licensed Carmen Prelude transcription.
 */
 (() => {
   "use strict";
