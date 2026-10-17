@@ -45,7 +45,10 @@
 - 実際に使用した歌唱・弦楽器の音符データ：[CostardRouge / system-g — bizet-carmen-toreador.txt](https://github.com/CostardRouge/system-g/blob/main/public/player/scores/bizet-carmen-toreador.txt)。
 - このリポジトリの `package.json` は `"license": "MIT"` ですが、確認時に独立した `LICENSE` ファイルは見つからず、**個別の楽譜データがそのライセンスの対象であることは未確認**です。
 - フランスの独自音律用に記された音符を平均律のMIDI音高・音価へ変換し、ゲーム用の伴奏を付けています。
-- **監査結果：要確認。** データ提供者に個別の採譜データの二次利用条件を確認するか、19世紀の保護期間満了の楽譜から独自に採譜し直すと確実です。
+- **原典譜を受領（2026-10-17）**：利用者から `IMSLP517383-PMLP15769-Bizet_Carmen_Nr.01_Overture_fs_(etc).pdf` の提供あり。PDFは**583ページ**の総譜全体（先頭150ページだけではない）。『Couplets』（第2幕No.14、エスカミーリョの「闘牛士の歌」）は**PDFの214～227ページ／印刷ページ211～224**。PDFの228ページから次の `RÉCIT` が始まる。
+- IMSLPの[ファイルNo.517383](https://imslp.org/wiki/Special:ReverseLookup/517383)は **Choudens初版（1877年頃、plate A.C.3795）の復刻**。1994年Könemann再刊（K 1005）。IMSLP上の表記は **Public Domain**。
+- 14ページを抜粋した照合用の譜面を作成（スキャン画像自体は改変しない）。原典の歌唱譜・オーケストレーションの構造と照合可能になった。
+- **監査結果：原典入手済み／音符データの完全な独自採譜は未実施。** 現在のゲームには引き続きSystème Gのデータが残っている。原典を入手した事実だけで、そのデータの再利用条件が明確になったとは扱わない。
 - 注意：以前のプログラムコメントには、Mutopia Project の **Carmen Prelude（CC BY-SA 2.5）**を音符の直接の出典とする誤記がありました。現在のこの曲のデータは **MutopiaのPrelude譜面を使用していません**。その誤記は修正しました。
 
 ## 現状の整理
