@@ -79,7 +79,8 @@
     ["Monoculodes sp.","砂泥底のクチバシソコエビ","sand","needle",4,119,183,.8],
     ["Bathyporeia sp.","波のある砂底に潜るヨコエビ","sand","sand",2,280,190,.79],
     ["Dexamine sp.","背中の棘のヨコエビ","grass","spiny",3,64,100,.89],
-    ["Pontogeneia sp.","泳ぐヨコエビ","algae","long",1,177,144,1.03]
+    ["Pontogeneia sp.","泳ぐヨコエビ","algae","long",1,177,144,1.03],
+    ["Eohaustorius sp.","砂にもぐるウシロマエソコエビ","sand","sand",11,209,185,.98]
   ];
   // Where a recognized Japanese genus/family name is available, use it instead of
   // inventing a Japanese species name for a genus-level (sp.) identification.
@@ -114,7 +115,8 @@
     "クチバシソコエビ科の一種",
     "クチバシソコエビ属の一種",
     "Bathyporeia属の一種（仮称）",
-    "アゴナガヨコエビの仲間"
+    "アゴナガヨコエビの仲間",
+    "ウシロマエソコエビ属の一種"
 ];
   const nicknameIndices = new Set([16,19,21,22,25,27]);
   const kinds = speciesData.map(([name,nameJa,habitat,shape,palette,x,y,base],i) => ({
@@ -128,12 +130,12 @@
   const regions = {
     akkeshi: {
       label:"厚岸・北日本",subtitle:"亜寒帯と温帯の境界をイメージした海",
-      species:[0,1,2,3,4,5,7,9,10,11,13,14,17,19,20,21,22,23,24,25,26,28,29],
+      species:[0,1,2,3,4,5,7,9,10,11,13,14,17,19,20,21,22,23,24,25,26,28,29,30],
       water:["#174b69","#10526a","#0c435f","#0c3953"], sand:"#bdab8c"
     },
     temperate: {
       label:"日本・温帯沿岸",subtitle:"海藻や浅い岩礁が広がる暖かい海",
-      species:[0,1,2,3,4,6,8,9,10,11,12,15,16,17,18,20,21,25,28,29],
+      species:[0,1,2,3,4,6,8,9,10,11,12,15,16,17,18,20,21,25,28,29,30],
       water:["#27929b","#1b828c","#186d7b","#12586b"],sand:"#cbb18a"
     },
     atlantic: {
