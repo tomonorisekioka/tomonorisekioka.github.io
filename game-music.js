@@ -56,15 +56,20 @@
     volume=Math.max(0,Math.min(1,Number(v)||0));
     if(bus&&context)bus.gain.setTargetAtTime(volume,context.currentTime,.035);
   }
-  function start(nextRegion="akkeshi"){
+  function start(nextRegion="akkeshi",fromSeconds=0){
     if(!hasAudio)return false;
     stop();
     region=Object.prototype.hasOwnProperty.call(scores,nextRegion)?nextRegion:"akkeshi";
     try{
       context ||=new NativeContext();
       if(context.state!=="running")context.resume().catch(()=>{});
+      const score=scores[region];
+      const offset=Math.max(0,Math.min(score.seconds-1,Number(fromSeconds)||0));
       bus=context.createGain();bus.gain.value=volume;bus.connect(context.destination);
-      eventIndex=0;startTime=context.currentTime+.075;playing=true;
+      eventIndex=0;
+      // Locate the first event on or after the requested score position.
+      while(eventIndex<score.events.length && score.events[eventIndex][0]*score.beat<offset-.03)eventIndex++;
+      startTime=context.currentTime+.075-offset;playing=true;
       pump();timer=window.setInterval(pump,70);
       return true;
     }catch(_){stop();return false;}
