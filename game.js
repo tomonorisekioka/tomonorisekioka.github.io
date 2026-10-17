@@ -156,7 +156,7 @@
     return buffer;
   });
 
-  let state = "ready", caught = 0, discovered = new Set();
+  let state = "ready", caught = 0, discovered = new Set(), roundFound = new Set(), records = {};
   let creatures = [], shots = [], particles = [], bubbles = [];
   let gameTime = 0, endAt = 0, lastFrame = 0, pausedAt = 0;
   let nextId = 0, toastUntil = 0;
@@ -166,28 +166,69 @@
   const flecks = Array.from({length:140},(_,i)=>({x:(i*97+13)%360,y:((i*53+29)%170)+6,c:i%3}));
 
   function makeCreature(kind, offset=0) {
-    const k = kinds[kind];
-    const x = clamp(k.home[0]+rand(-21,21)+(offset?rand(-8,8):0),k.limit[0]+3,k.limit[1]-3);
-    const y = clamp(k.home[1]+rand(-13,13),k.limit[2]+3,k.limit[3]-3);
-    return {id: ++nextId, kind, x, y, vx:rand(-5,5),vy:rand(-3,3),facing: Math.random()>.5?1:-1,
+    const k=kinds[kind], rope=k.habitat==="rope", sand=k.habitat==="sand";
+    const x=clamp(k.home[0]+rand(rope?-4:-10,rope?4:10)+(offset?rand(-3,3):0),k.limit[0]+3,k.limit[1]-3);
+    const y=clamp(k.home[1]+rand(sand?-3:-8,sand?3:8),k.limit[2]+2,k.limit[3]-2);
+    const ratio=rollSize();
+    return {id:++nextId,kind,x,y,ratio,scale:k.base*ratio,
+      vx:rand(-5,5),vy:rand(-3,3),facing:Math.random()>.5?1:-1,
       fleeX:Math.random()>.5?1:-1,fleeY:0,phase:rand(0,7),shiver:0,shiverPower:1,hidden:0,
-      escapeGlow:0, wander:rand(0,7)};
+      escapeGlow:0,wander:rand(0,7)};
+  }
+  function loadRecords() {
+    try{
+      const saved=JSON.parse(localStorage.getItem(RECORD_KEY)||"{}");
+      if(saved&&typeof saved==="object"&&!Array.isArray(saved)){
+        for(const [key,item] of Object.entries(saved)){
+          const n=Number(key);
+          if(!Number.isInteger(n)||n<0||n>=SPECIES_TOTAL||!item||typeof item!=="object")continue;
+          const count=Number(item.count)||0,big=Number(item.big)||0,small=Number(item.small)||0;
+          if(count<=0)continue;
+          records[n]={
+            count:Math.max(1,Math.floor(count)),
+            big:clamp(big,.5,2),small:clamp(small,.5,2),
+            large:item.large==="gold"?"gold":item.large==="silver"?"silver":"",
+            mini:item.mini===true
+          };
+          discovered.add(n);
+        }
+      }
+    }catch(_){/* Game still runs in private browsing or when storage is blocked. */}
+  }
+  function saveRecords() {
+    try{localStorage.setItem(RECORD_KEY,JSON.stringify(records));}catch(_){}
+  }
+  function crownCounts() {
+    let largeGold=0,largeSilver=0,miniGold=0;
+    Object.values(records).forEach(r=>{
+      if(r.large==="gold")largeGold++;
+      if(r.large==="silver")largeSilver++;
+      if(r.mini)miniGold++;
+    });
+    return {largeGold,largeSilver,miniGold};
+  }
+  function updateCrownDisplay() {
+    const c=crownCounts();
+    if(ui.crowns)ui.crowns.textContent="♛ "+(c.largeGold+c.largeSilver+c.miniGold);
   }
   function reset() {
-    caught = 0;discovered = new Set();gameTime = 0;net = null;pausedAt=0;
-    creatures = [];shots=[];particles=[];
-    for(let kind=0;kind<kinds.length;kind++)for(let i=0;i<3;i++)creatures.push(makeCreature(kind,i));
-    ui.time.textContent="00:30";ui.caught.textContent="0";ui.species.textContent="0 / 6";
-    renderCollection();
+    caught=0;roundFound=new Set();gameTime=0;net=null;pausedAt=0;
+    creatures=[];shots=[];particles=[];
+    // One of each morphotype is present; eight more randomly chosen are roaming.
+    // Unlike 3 copies per type, this keeps thirty types visible without filling the sea.
+    for(let kind=0;kind<SPECIES_TOTAL;kind++)creatures.push(makeCreature(kind));
+    for(let i=0;i<8;i++)creatures.push(makeCreature(Math.floor(Math.random()*SPECIES_TOTAL),1));
+    ui.time.textContent="00:30";ui.caught.textContent="0";ui.species.textContent="0 / "+SPECIES_TOTAL;
+    updateCrownDisplay();renderCollection();
     pointer.active=false;pointer.speed=0;
   }
   function showToast(str) {
-    ui.toast.textContent=str;ui.toast.classList.add("visible");toastUntil=performance.now()+950;
+    ui.toast.textContent=str;ui.toast.classList.add("visible");toastUntil=performance.now()+1050;
   }
   function renderCollection() {
     ui.grid.textContent="";
     kinds.forEach((k,i)=>{
-      const found=discovered.has(i);
+      const found=discovered.has(i),rec=records[i];
       const item=document.createElement("article");item.className="specimen"+(found?" found":"");
       const art=document.createElement("div");art.className="specimen-art";
       if(found){
@@ -196,11 +237,33 @@
         m.drawImage(speciesSprites[i],3,4,42,30);art.appendChild(mini);
       }else art.textContent="?";
       const info=document.createElement("div");info.className="specimen-copy";
-      const name=document.createElement("strong");name.textContent=found?k.name:"？？？？？？";
-      const where=document.createElement("p");where.textContent=found?(k.nameJa+" / "+k.where):"未採集";
-      info.append(name,where);item.append(art,info);ui.grid.appendChild(item);
+      const name=document.createElement("strong");
+      name.textContent=found?k.name:"No. "+String(i+1).padStart(2,"0")+"　????";
+      const where=document.createElement("p");
+      where.textContent=found?(k.nameJa+" / "+k.where):"未採集 · "+k.where;
+      info.append(name,where);
+      if(found&&rec){
+        const sizes=document.createElement("p");sizes.className="specimen-sizes";
+        sizes.textContent="採集 "+rec.count+"｜最大 "+rec.big.toFixed(2)+"× / 最小 "+rec.small.toFixed(2)+"×";
+        info.appendChild(sizes);
+        if(rec.large||rec.mini){
+          const badges=document.createElement("div");badges.className="crown-list";
+          if(rec.large){
+            const badge=document.createElement("span");badge.className="crown-badge "+rec.large;
+            badge.textContent=rec.large==="gold"?"♛ 大型金冠":"♛ 大型銀冠";
+            badges.appendChild(badge);
+          }
+          if(rec.mini){
+            const badge=document.createElement("span");badge.className="crown-badge mini";
+            badge.textContent="♛ ミニ金冠";badges.appendChild(badge);
+          }
+          info.appendChild(badges);
+        }
+      }
+      item.append(art,info);ui.grid.appendChild(item);
     });
-    ui.progress.textContent=discovered.size?kinds.length+"種類中 "+discovered.size+"種類を発見。":"まだ採集した個体はいません。";
+    const c=crownCounts();
+    ui.progress.textContent=discovered.size+" / "+SPECIES_TOTAL+"タイプ採集済み · 大型金 "+c.largeGold+" / 大型銀 "+c.largeSilver+" / ミニ金 "+c.miniGold;
   }
   function start() {
     reset();
@@ -211,8 +274,8 @@
   function finish() {
     state="ended"; net=null;ui.overlay.hidden=false;
     ui.kicker.textContent="FIELD REPORT";
-    ui.title.textContent=discovered.size===6?"全種類採集！":"採集終了！";
-    ui.text.textContent="採集 "+caught+"個体・"+discovered.size+"/6種類。速く近づくと押し流されるので、ゆっくり狙ってまた挑戦してね。";
+    ui.title.textContent=roundFound.size===SPECIES_TOTAL?"全種類採集！":"採集終了！";
+    ui.text.textContent="今回 "+caught+"個体・"+roundFound.size+"/"+SPECIES_TOTAL+"タイプ。図鑑の採集記録と冠は次回も残るよ。";
     ui.play.firstChild.textContent="もう一度採集する ";
     ui.play.querySelector("span").textContent="↻";
   }
@@ -595,5 +658,5 @@
       endAt+=performance.now()-pausedAt;pausedAt=0;lastFrame=performance.now();
     }
   });
-  setupTheme();reset();requestAnimationFrame(frame);
+  setupTheme();loadRecords();reset();requestAnimationFrame(frame);
 })();
