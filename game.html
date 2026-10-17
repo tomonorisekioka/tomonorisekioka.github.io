@@ -18,8 +18,8 @@
     })();
   </script>
   <link rel="stylesheet" href="style.css?v=20261017-dark1">
-  <link rel="stylesheet" href="game.css?v=20261017-crowns1">
-  <script defer src="game.js?v=20261017-biogeo1"></script>
+  <link rel="stylesheet" href="game.css?v=20261017-regions1">
+  <script defer src="game.js?v=20261017-regions1"></script>
 </head>
 <body>
   <a class="skip-link" href="#play">ゲームへスキップ</a>
@@ -44,17 +44,26 @@
   <main class="wrap game-main" id="play">
     <div class="game-heading">
       <div>
-        <p class="eyebrow">NORTHWEST PACIFIC · A FICTIONAL SHORE</p>
+        <p class="eyebrow">THREE COASTS · A PIXEL FIELD TRIP</p>
         <h1>ヨコエビ採集日和 <span>AMPHIPOD HUNT</span></h1>
-        <p class="game-subtitle">北西太平洋をイメージした架空の海。海藻のすきま、砂泥底の棲管、岩のかげ、ブイのロープ。<br>「つかまえた！」と思った次の瞬間、するり。<br>30タイプ、サイズいろいろ。珍しい個体には金冠・銀冠も。</p>
+        <p class="game-subtitle">厚岸・日本の温帯沿岸・北大西洋。海域ごとに変わるヨコエビの顔ぶれ。<br>「つかまえた！」と思った次の瞬間、するり。<br>30タイプ、サイズいろいろ。珍しい個体には金冠・銀冠も。</p>
       </div>
       <p class="game-stamp">PIXEL FIELD NOTE <span>no. 001</span></p>
     </div>
     <section class="game-station" aria-label="ヨコエビ採集ゲーム">
+      <div class="region-selector" role="group" aria-label="海域の切り替え">
+        <span class="region-selector-label">FIELD SITE / 海域を選ぶ</span>
+        <div class="region-buttons">
+          <button type="button" data-region="akkeshi" aria-pressed="true">❄ 厚岸・北日本</button>
+          <button type="button" data-region="temperate" aria-pressed="false">☀ 日本・温帯沿岸</button>
+          <button type="button" data-region="atlantic" aria-pressed="false">◈ 北大西洋</button>
+        </div>
+        <p id="region-description">亜寒帯と温帯の境界をイメージした海 · 23タイプが出現</p>
+      </div>
       <div class="game-bar">
         <div class="game-stat"><span>TIME</span><strong id="time-display">00:30</strong></div>
         <div class="game-stat"><span>CAUGHT</span><strong id="catch-display">0</strong></div>
-        <div class="game-stat"><span>TYPES</span><strong id="species-display">0 / 30</strong></div>
+        <div class="game-stat"><span>TYPES</span><strong id="species-display">0 / 23</strong></div>
         <div class="game-stat"><span>CROWNS</span><strong id="crown-display">♛ 0</strong></div>
         <div class="game-stat game-stat-action"><button class="game-small-button" type="button" id="restart-button">↻ やり直す</button></div>
       </div>
@@ -66,7 +75,7 @@
             <h2 id="overlay-title">ヨコエビをつかまえよう。</h2>
             <p id="overlay-text">ヨコエビを見つけたらクリックして網を振る。<br>反射的に身をよじって、網をすり抜けてしまうことも。</p>
             <button type="button" class="game-start" id="play-button">採集をはじめる <span aria-hidden="true">→</span></button>
-            <p class="overlay-small">30秒で何タイプ採集できる？</p>
+            <p class="overlay-small">海域を選んで30秒で何タイプ採集できる？</p>
           </div>
         </div>
         <div id="game-toast" class="game-toast" role="status" aria-live="polite"></div>
@@ -96,8 +105,8 @@
         <span class="crown-badge silver">♛ 大型銀冠 <small>1.27×以上</small></span>
         <span class="crown-badge mini">♛ ミニ金冠 <small>0.70×以下</small></span>
       </div>
-      <div class="collection-grid" id="collection-grid" aria-label="30タイプの採集図鑑"></div>
-      <p class="collection-note">冠は各タイプの標準サイズに対するゲーム内倍率で判定しています（実測体長ではありません）。図鑑のサイズ記録・冠はこのブラウザに保存されます。このゲームは北西太平洋沿岸をイメージしたフィクションで、日本語名は確認できた属・科の和名を優先し、それ以外は「ゲーム内呼称」と区別しています。姿・生息場所はゲーム向けにデフォルメしており、全30属が実際に同じ場所で共存するという意味ではありません。</p>
+      <div class="collection-grid" id="collection-grid" aria-label="選択した海域の採集図鑑"></div>
+      <p class="collection-note">冠は各タイプの標準サイズに対するゲーム内倍率で判定しています（実測体長ではありません）。図鑑のサイズ記録・冠は海域ごとに分けてこのブラウザに保存されます。このゲームは厚岸・日本の温帯沿岸・北大西洋をイメージしたフィクションで、日本語名は確認できた属・科の和名を優先し、それ以外は「ゲーム内呼称」と区別しています。姿・生息場所はゲーム向けにデフォルメしており、各海域の出演属は厳密な現地採集リストではなく、同所的な出現や生息分布を証明するものではありません。</p>
     </section>
   </main>
   <footer class="footer"><div class="wrap footer-inner"><span>© 2026 Tomonori Sekioka · A tiny interactive field note</span><a href="index.html">研究者サイトに戻る ↗</a></div></footer>
