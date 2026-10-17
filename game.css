@@ -99,3 +99,15 @@
 .region-buttons button{min-width:0;font-size:10px;padding:7px 2px;letter-spacing:-.02em}
 #region-description{font-size:10px}
 }
+
+/* Pixel-game audio controls */
+.music-controls{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:11px;padding-top:11px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}
+.music-label{font-weight:730;letter-spacing:.03em;color:var(--ink);margin-right:auto}
+.music-controls button{cursor:pointer;border:1px solid var(--accent);background:var(--pale);color:var(--ink);border-radius:4px;padding:5px 13px;font:inherit;font-weight:800;font-size:11px;min-width:80px}
+.music-controls button[aria-pressed="false"]{border-color:var(--line);background:var(--bg);color:var(--muted)}
+.music-controls button:focus-visible,.music-controls input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.music-controls input[type="range"]{width:100px;max-width:27vw;accent-color:var(--accent);cursor:pointer}
+.music-controls button:disabled,.music-controls input:disabled{opacity:.5;cursor:default}
+.music-credit{font-size:11px;line-height:1.7;color:var(--muted);margin-top:15px}
+.specimen-group{font-size:9px!important;line-height:1.4!important;letter-spacing:.035em;color:var(--accent)!important;font-weight:750;margin-top:7px!important}
+@media(max-width:640px){.music-controls{gap:7px}.music-label{flex-basis:100%}.music-controls input[type="range"]{width:96px}.music-credit{font-size:10px}.specimen-group{font-size:8px!important}}
