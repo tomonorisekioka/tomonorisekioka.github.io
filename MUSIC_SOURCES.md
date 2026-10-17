@@ -20,15 +20,16 @@
   - [IMSLP #810456](https://imslp.org/wiki/Peer_Gynt_Suite_No.1,_Op.46_(Grieg,_Edvard)) — 1888年1月20日付の自筆総譜（Public Domain）
   - 同ページ **#912194 / #521719** — 1888年Peters初版の復刻総譜（Public Domain）
   - [Sibley Music Library](https://urresearch.rochester.edu/institutionalPublicationPublicView.action?institutionalItemVersionId=16183) — 歴史的Peters版のピアノ連弾譜（Public Domainとして公開）
-- 原典の音符照合と置換は**未実施**。現時点のゲーム音源は既存の編曲由来で、権利確認の課題は残っている。
+- **2026-10-17に置換実施**：Noctave配布の `grieg-au-matin.mxl`（CC0 1.0）から87小節を抽出し、以前のDiethart Stecher編曲に基づく音符データを除去した。
 
 ## 1. グリーグ『朝』 / Morning Mood
 
-- 原曲：Edvard Grieg — *Peer Gynt*、著作権保護期間満了。
-- 使用した音符データの出典：[cellist / Lilypond-Sheet-Music — *Morgenstimmung*](https://github.com/cellist/Lilypond-Sheet-Music/tree/master/Fl%2C%20Fl%2C%20Vl%2C%20Vlc/Grieg%2C%20Edvard/Morgenstimmung)
-- 編曲：**Diethart Stecher**。GitHub版の入力日は2025-03-03。音符を抜き出し、移調・8bit化した4声のデータを利用。
-- 出典リポジトリの[README](https://github.com/cellist/Lilypond-Sheet-Music/blob/master/README.md)には、掲載楽譜の利用・共有を歓迎する記載があります。ただし、**この特定の編曲を改変して公開することまで許諾する明示的なライセンス条文は確認できていません**。READMEの書き手と編曲者も必ずしも同一ではありません。
-- **監査結果：要確認。** 編曲者から二次利用・改変・公開について許諾を得るか、保護期間が満了した原典譜から独自に編曲し直すことを推奨します。クレジット表記だけで許諾が不要になるわけではありません。
+- 原曲：Edvard Grieg — *Peer Gynt*。著作権保護期間満了。
+- **現在の使用音符データ**：[Noctave — Au matin (Peer Gynt)](https://noctavepiano.com/en/sheet-music/grieg-au-matin/) の `grieg-au-matin.mxl`。2026年10月11日作成。MXL内部の `rights` 要素に **CC0 1.0** と明記されている。
+- Noctaveの情報によれば、原資料はグリーグ本人によるピアノ版の1900年G. Schirmer刊（plate 14300、Louis Oesterle編）で、[当時の出版物のスキャン](https://archive.org/details/31761045200615)に基づく。
+- **2026-10-17置換**：87小節の両手パートから、音高・音価・休符・タイ・和音・短い装飾音をプログラムで抽出し `game-morning-cc0.js` に収録。低音の一部を小型スピーカー向けにオクターブ移動し、Web Audioの矩形波などで独自演奏。テンポはMXLの指定に合わせ、約174秒。
+- 過去に参照した **Diethart Stecherによる2025年の室内楽編曲の音符データは、現在のコードから除去**。楽曲の既存録音・商用音源・市販MIDIは使用していない。
+- **監査結果：音符データをCC0の公開譜面に移行済み。** グリーグ本人の原曲の著作権も満了しており、当該MXLに関する不明な現代編曲の権利懸念は解消。
 
 ## 2. サティ『ジムノペディ第1番』 / Gymnopédie No. 1
 
@@ -51,7 +52,7 @@
 
 | 対象 | 原曲の権利 | 参照した楽譜データ | 評価 |
 | --- | --- | --- | --- |
-| グリーグ『朝』 | 保護期間満了 | Diethart Stecherによる現代編曲 | **改変公開の許諾条件が未確定** |
+| グリーグ『朝』 | 保護期間満了 | Noctave CC0（グリーグ本人のピアノ版） | **置換・確認済み** |
 | サティ『ジムノペディ第1番』 | 保護期間満了 | Mutopia: Public Domain | **確認済み** |
 | ビゼー『闘牛士の歌』 | 保護期間満了 | Système G採譜データ | **譜面データのライセンス範囲が未確定** |
 | ゲーム内の波形合成 | — | Web Audioで新たに合成 | 第三者の録音は使用していない |
