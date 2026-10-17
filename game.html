@@ -18,12 +18,12 @@
     })();
   </script>
   <link rel="stylesheet" href="style.css?v=20261017-dark1">
-  <link rel="stylesheet" href="game.css?v=20261017-lysianassoid1">
+  <link rel="stylesheet" href="game.css?v=20261017-controls-scenes1">
   <script defer src="game-morning-cc0.js?v=20261017-cc0piano1"></script>
   <script defer src="game-carmen-pdmx.js?v=20261017-pdmx1"></script>
   <script defer src="game-music-data.js?v=20261017-pdmx1"></script>
   <script defer src="game-music.js?v=20261017-pdmx1"></script>
-  <script defer src="game.js?v=20261017-pdmx1"></script>
+  <script defer src="game.js?v=20261017-controls-scenes1"></script>
 </head>
 <body>
   <a class="skip-link" href="#play">ゲームへスキップ</a>
@@ -88,12 +88,12 @@
             <h2 id="overlay-title">ヨコエビをつかまえよう。</h2>
             <p id="overlay-text">ヨコエビを見つけたらクリックして網を振る。<br>反射的に身をよじって、網をすり抜けてしまうことも。</p>
             <button type="button" class="game-start" id="play-button">採集をはじめる <span aria-hidden="true">→</span></button>
-            <p class="overlay-small">海域を選んで30秒で何タイプ採集できる？</p>
+            <p class="overlay-small" id="overlay-hint">海域を選んで30秒で何タイプ採集できる？</p>
           </div>
         </div>
         <div id="game-toast" class="game-toast" role="status" aria-live="polite"></div>
       </div>
-      <div class="game-bottom"><span><span class="sea-indicator" aria-hidden="true"></span> 海中をよく見ると、あちこちにヨコエビが。</span><span>クリックで採集 / スマホは指をゆっくり動かして離す <span aria-hidden="true">/</span> 矢印キー＋SpaceでもOK</span></div>
+      <div class="game-bottom"><span><span class="sea-indicator" aria-hidden="true"></span> 海中をよく見ると、あちこちにヨコエビが。</span><span>クリックで採集 / スマホは指をゆっくり動かして離す <span aria-hidden="true">/</span> 矢印キー長押しで移動＋Spaceで採集</span></div>
     </section>
 
     <section class="game-guide" id="guide">
