@@ -27,59 +27,131 @@
     progress: document.getElementById("collection-progress")
   };
 
-  // Species names are descriptive game labels. This is not a taxonomic identification exercise.
-  const kinds = [
-    { name: "Cerapus sp.", nameJa: "ホソツツムシの仲間", where: "アマモ場", color: "#d8a776", light: "#f8d5a4", dark: "#7c5c56", home: [77,145], limit: [41,116,117,169], shape: "tube" },
-    { name: "Ampelisca sp.", nameJa: "クチバシソコエビの仲間", where: "砂底", color: "#edc4a2", light: "#fff0ca", dark: "#927977", home: [157,181], limit: [113,192,170,193], shape: "curve" },
-    { name: "Stenothoidae", nameJa: "小さな礁の住人", where: "岩・サンゴ", color: "#e99d96", light: "#ffd8bd", dark: "#895c81", home: [244,146], limit: [206,277,120,170], shape: "hump" },
-    { name: "Caprella sp.", nameJa: "ワレカラの仲間", where: "ブイのロープ", color: "#b5daab", light: "#e7ffc5", dark: "#618f7c", home: [307,85], limit: [294,322,45,134], shape: "caprella" },
-    { name: "Gammaropsis sp.", nameJa: "海藻に隠れたヨコエビ", where: "海藻の茂み", color: "#d2b6ec", light: "#efe2ff", dark: "#806794", home: [101,107], limit: [43,133,75,137], shape: "curve" },
-    { name: "Urothoe sp.", nameJa: "砂にもぐるヨコエビ", where: "砂の中", color: "#eed5a2", light: "#fff2c8", dark: "#9b9473", home: [226,182], limit: [187,279,170,196], shape: "sand" }
+  // Thirty distinct, stylized genus-level morphotypes — not verified local occurrence records.
+  // Each has its own palette, markings, silhouette, typical size and habitat.
+  const habitats = {
+    grass: { label:"アマモ場", limit:[34,146,90,169] },
+    algae: { label:"海藻の茂み", limit:[88,194,71,158] },
+    sand:  { label:"砂底", limit:[112,286,176,195] },
+    reef:  { label:"岩礁・サンゴ", limit:[200,283,111,171] },
+    rope:  { label:"ブイのロープ", limit:[296,327,44,141] }
+  };
+  // Palette variations intentionally aid recognition in the small pixel sprites.
+  const palettes = [
+    ["#d8a776","#f8d5a4","#7c5c56"],["#edc4a2","#fff0ca","#927977"],
+    ["#e99d96","#ffd8bd","#895c81"],["#b5daab","#e7ffc5","#618f7c"],
+    ["#d2b6ec","#efe2ff","#806794"],["#eed5a2","#fff2c8","#9b9473"],
+    ["#75cfb3","#c6ffe4","#397d7b"],["#e2aa6b","#ffe6a3","#965e57"],
+    ["#a3baf0","#e1e9ff","#6077ae"],["#d785a4","#ffd1da","#914d7b"],
+    ["#a8cb81","#ddffb5","#66834b"],["#f0ad81","#ffddac","#ae7058"],
+    ["#92d5dc","#dcfcfc","#497e9a"],["#c6ae83","#e9dbc0","#826e6c"],
+    ["#c89ecf","#f4cbf5","#926993"]
   ];
-
+  // [genus label, Japanese nickname, habitat, silhouette, palette, x, y, base size]
+  const speciesData = [
+    ["Cerapus sp.","ホソツツムシ","grass","tube",0,55,142,.86],
+    ["Ampelisca sp.","クチバシソコエビ","sand","curve",1,157,184,.86],
+    ["Stenothoe sp.","ずんぐりしたヨコエビ","reef","hump",2,237,129,.72],
+    ["Caprella sp.","ワレカラ","rope","caprella",3,305,63,.89],
+    ["Gammaropsis sp.","海藻のヨコエビ","algae","curve",4,111,97,.81],
+    ["Urothoe sp.","砂に潜るヨコエビ","sand","sand",5,231,187,.77],
+    ["Jassa sp.","棲管にすむヨコエビ","rope","tube",6,306,86,.66],
+    ["Ericthonius sp.","ロープの棲管ヨコエビ","rope","long",7,315,109,.69],
+    ["Aora sp.","雄の腕が目立つヨコエビ","grass","long",8,81,133,.77],
+    ["Photis sp.","アマモに付くヨコエビ","grass","tube",9,122,131,.71],
+    ["Ischyrocerus sp.","細身のヨコエビ","algae","needle",10,139,86,.72],
+    ["Monocorophium sp.","小さな棲管ヨコエビ","grass","squat",11,53,117,.67],
+    ["Leucothoe sp.","ふくらんだヨコエビ","reef","hump",12,259,145,.85],
+    ["Liljeborgia sp.","しま模様のヨコエビ","reef","spiny",13,214,136,.9],
+    ["Metopa sp.","小型の礁性ヨコエビ","reef","squat",14,248,119,.63],
+    ["Elasmopus sp.","岩陰のヨコエビ","reef","thick",0,277,153,1.04],
+    ["Maera sp.","大きな顎のヨコエビ","reef","thick",7,220,156,1.09],
+    ["Melita sp.","アマモ場のヨコエビ","grass","curve",6,85,154,.93],
+    ["Hyale sp.","緑藻につくヨコエビ","algae","thick",10,152,112,.88],
+    ["Paradexamine sp.","とげとげヨコエビ","algae","spiny",9,116,121,.91],
+    ["Phoxocephalus sp.","とがった頭のヨコエビ","sand","needle",12,178,184,.78],
+    ["Harpinia sp.","砂泥にすむヨコエビ","sand","sand",13,135,190,.69],
+    ["Haustorius sp.","砂を掘るヨコエビ","sand","squat",5,196,188,1.12],
+    ["Bathyporeia sp.","細長い砂底ヨコエビ","sand","long",8,249,185,.8],
+    ["Byblis sp.","砂のクチバシソコエビ","sand","needle",14,273,185,.84],
+    ["Tiron sp.","棘のあるヨコエビ","algae","spiny",11,169,119,1.08],
+    ["Rostroculodes sp.","小さなクチバシヨコエビ","sand","needle",4,119,183,.72],
+    ["Pacifoculodes sp.","砂底の小型ヨコエビ","sand","curve",2,280,190,.62],
+    ["Dexamine sp.","背中の棘のヨコエビ","grass","spiny",3,64,100,.89],
+    ["Pontogeneia sp.","泳ぐヨコエビ","algae","long",1,177,144,1.03]
+  ];
+  const kinds = speciesData.map(([name,nameJa,habitat,shape,palette,x,y,base],i) => ({
+    name,nameJa,habitat,where:habitats[habitat].label,shape,home:[x,y],
+    limit:habitats[habitat].limit,base,pattern:i%5,
+    color:palettes[palette][0],light:palettes[palette][1],dark:palettes[palette][2]
+  }));
+  const SPECIES_TOTAL = kinds.length;
+  const RECORD_KEY = "ts-amphipod-collection-v2";
+  // Like MH: small gold = tiny crown; large silver/gold = oversized specimen.
+  // Ratios are relative to each morphotype's standard pixel size, not real measurements.
+  function crownFor(ratio) {
+    return ratio <= .70 ? "mini" : ratio >= 1.48 ? "gold" : ratio >= 1.27 ? "silver" : "";
+  }
+  function rollSize() {
+    const r=Math.random();
+    if(r<.045)return rand(.58,.70);
+    if(r<.145)return rand(1.48,1.68);
+    if(r<.31)return rand(1.27,1.46);
+    return rand(.79,1.26);
+  }
   const rand = (a, b) => a + Math.random() * (b - a);
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const length = (x, y) => Math.hypot(x, y);
   const rect = (x, y, w, h, color) => { ctx.fillStyle = color; ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); };
   const pixel = (p, x, y, w, h, color) => { p.fillStyle = color; p.fillRect(x, y, w, h); };
   const speciesSprites = kinds.map((k) => {
-    const buffer = document.createElement("canvas");
-    buffer.width = 32; buffer.height = 24;
-    const p = buffer.getContext("2d");
-    const ink = "#314351", main = k.color, hi = k.light, shade = k.dark;
-    const b = (x,y,w,h,col) => pixel(p,x,y,w,h,col);
-    if (k.shape === "caprella") {
-      // Stick-thin caprellid: long body, grasping legs, paired antennae.
-      b(12,8,10,2,ink); b(13,8,8,2,main); b(10,7,4,3,ink); b(10,7,3,2,hi);
-      b(17,6,3,2,main); b(14,4,2,4,shade); b(20,7,3,2,shade);
-      b(22,5,1,3,hi); b(24,3,1,4,hi); b(26,2,1,3,hi);
-      b(11,10,2,5,main); b(9,14,2,3,shade); b(7,16,2,2,hi);
-      b(17,10,2,5,main); b(19,14,2,3,main); b(21,16,3,1,shade);
-      b(20,10,2,4,main); b(22,13,3,2,hi); b(22,8,2,2,hi);
-      b(12,8,1,1,ink);
-    } else {
-      const hump = k.shape === "hump";
-      const tube = k.shape === "tube";
-      const sand = k.shape === "sand";
-      const spans = hump ? [[5,10,4],[8,7,8],[13,5,11],[18,7,9],[22,10,6]]
-        : sand ? [[4,10,4],[7,9,6],[11,9,7],[15,10,7],[19,10,6],[23,11,4]]
-        : [[5,11,4],[8,9,6],[12,7,8],[17,8,8],[21,10,6]];
-      spans.forEach(([x,y,h],i) => {
-        b(x,y-1,4,h+2,ink);
-        b(x+1,y,3,h,main);
-        b(x+1,y,3,2,hi);
-        if (i > 0 && i < spans.length-1) b(x+3,y+h-2,1,2,shade);
+    const buffer=document.createElement("canvas");
+    buffer.width=32;buffer.height=24;
+    const p=buffer.getContext("2d"),ink="#314351",main=k.color,hi=k.light,shade=k.dark;
+    const b=(x,y,w,h,col)=>pixel(p,x,y,w,h,col);
+    if(k.shape==="caprella"){
+      b(10,8,13,2,ink);b(12,8,10,2,main);b(10,7,4,3,ink);b(11,7,3,2,hi);
+      b(16,5,2,3,main);b(14,3,2,4,shade);b(21,8,2,2,shade);
+      b(23,5,1,4,hi);b(25,3,1,4,hi);b(27,2,1,3,hi);
+      b(10,10,2,5,main);b(8,14,2,3,shade);b(6,16,3,2,hi);
+      b(17,10,2,5,main);b(19,14,2,3,main);b(21,16,3,1,shade);
+      b(21,10,2,4,main);b(23,13,3,2,hi);b(12,8,1,1,ink);
+    }else{
+      const shape=k.shape, hump=shape==="hump",tube=shape==="tube",sand=shape==="sand";
+      const spans=hump?[[5,10,4],[8,7,8],[13,5,11],[18,7,9],[22,10,6]]
+        :sand?[[4,11,4],[8,10,6],[12,9,7],[16,10,7],[20,11,6],[23,12,4]]
+        :shape==="needle"?[[4,11,2],[9,10,4],[14,9,6],[19,10,5],[24,11,3]]
+        :shape==="squat"?[[6,10,5],[10,8,8],[15,8,9],[20,10,7]]
+        :shape==="thick"?[[4,9,6],[8,7,10],[13,6,11],[18,8,10],[23,10,6]]
+        :shape==="long"?[[3,11,3],[7,10,4],[11,9,5],[15,9,6],[19,9,6],[23,11,3]]
+        :[[5,11,4],[8,9,6],[12,7,8],[17,8,8],[21,10,6]];
+      spans.forEach(([x,y,h],i)=>{
+        b(x,y-1,4,h+2,ink);b(x+1,y,3,h,main);b(x+1,y,3,2,hi);
+        if(k.pattern===0&&i%2===0)b(x+2,y+3,2,2,shade); // dots
+        if(k.pattern===1&&i%2===1)b(x+1,y+3,2,Math.max(2,h-5),shade); // stripes
+        if(k.pattern===2&&i>=2)b(x+1,y+1,1,3,shade); // short dark saddle
+        if(k.pattern===3&&i%2===0)b(x+2,y+2,1,2,hi); // light flecks
+        if(k.pattern===4)b(x+1,y+h-2,3,1,shade); // belly band
       });
-      b(22,10,5,5,ink); b(22,10,4,4,main); b(23,11,3,1,hi);
-      b(26,10,2,2,hi); b(28,8,1,3,hi); b(30,7,1,2,shade);
-      b(24,12,1,1,ink); // dark eye
-      for (let i=0; i<4; i++) {
-        const x=8+i*4, yy=(sand?14:(hump?15:15)) + (i===1?1:0);
-        b(x,yy,1,4,shade); b(x-2,yy+3,3,1,shade);
+      const headX=shape==="needle"?26:23;
+      b(headX,10,5,5,ink);b(headX,10,4,4,main);b(headX+1,11,3,1,hi);
+      b(headX+3,10,2,2,hi);b(headX+5,8,1,3,hi);b(headX+6,7,1,2,shade);
+      b(headX+2,12,1,1,ink);
+      for(let i=0;i<4;i++){
+        const x=8+i*4,yy=sand?15:(hump?16:15);
+        b(x,yy,1,4,shade);b(x-2,yy+3,3,1,shade);
       }
-      b(4,13,3,1,shade); b(2,14,3,1,shade); b(3,16,1,2,shade);
-      if (tube) { b(8,16,14,2,"#937665"); b(9,17,9,1,"#c4a47f"); }
-      if (hump) { b(13,5,6,2,hi); b(19,6,3,2,hi); }
+      b(4,13,3,1,shade);b(2,14,3,1,shade);
+      if(tube){b(8,17,14,2,"#937665");b(9,17,10,1,"#c4a47f");}
+      if(hump){b(13,5,6,2,hi);b(19,6,3,2,hi);}
+      if(shape==="spiny"){
+        b(9,6,2,3,hi);b(14,4,2,4,shade);b(19,5,2,4,hi);
+        b(8,3,1,4,shade);b(14,2,1,3,hi);
+      }
+      if(shape==="thick"){b(18,15,6,2,shade);b(21,17,3,3,main);}
+      if(shape==="squat"){b(9,7,13,3,hi);b(13,17,8,2,shade);}
+      if(shape==="needle"){b(2,12,6,1,shade);b(0,13,4,1,shade);}
+      if(shape==="long"){b(3,12,2,2,shade);b(18,15,3,3,hi);}
     }
     return buffer;
   });
