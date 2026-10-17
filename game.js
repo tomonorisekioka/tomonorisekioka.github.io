@@ -88,12 +88,12 @@
     ["Orchomenella sp.","海底で餌を探すヨコエビ","sand","lysianassoid",12,265,180,.82],
     ["Hippomedon sp.","ずんぐりしたフトヒゲソコエビ","reef","lysianassoid",14,252,150,1.13]
   ];
-  // Where a recognized Japanese genus/family name is available, use it instead of
-  // inventing a Japanese species name for a genus-level (sp.) identification.
-  // Entries marked as nickname are descriptive game labels, not taxonomic vernacular names.
+  // Display a verified Japanese genus name when available. Otherwise use the
+  // verified family name, then the superfamily name (as for Bathyporeia).
+  // Latin genus names remain visible in the collection note for each specimen.
   const japaneseLabels = [
     "ホソツツムシ属の一種",
-    "スガメ属の一種",
+    "スガメソコエビ属の一種",
     "タテソコエビ属の一種",
     "ワレカラ属の一種",
     "ソコエビ属の一種",
@@ -103,35 +103,34 @@
     "ヒメユンボソコエビ属の一種",
     "クダオソコエビ属の一種",
     "カマキリヨコエビ科の一種",
-    "ドロクダムシ類の一種",
+    "ドロクダムシ科の一種",
     "マルハサミヨコエビ属の一種",
     "トゲヨコエビ属の一種",
     "タテソコエビ科の一種",
     "イソヨコエビ属の一種",
-    "岩陰の大型ヨコエビ",
-    "メリタヨコエビ科の一種",
-    "モクズヨコエビ科の一種",
-    "Atylus属の一種（仮称）",
+    "スンナリヨコエビ属の一種",
+    "メリタヨコエビ属の一種",
+    "モクズヨコエビ属の一種",
+    "フタハナヨコエビ属の一種",
     "ヒサシソコエビ属の一種",
-    "砂泥に潜むヨコエビ",
-    "Opisa属の一種",
+    "スナソコエビ属の一種",
+    "オオテソコエビ科の一種",
     "キヌタソコエビ属の一種",
-    "スガメソコエビ科の一種",
-    "トゲのあるヨコエビ",
-    "クチバシソコエビ科の一種",
+    "オボコスガメ属の一種",
+    "ムシャヨコエビ属の一種",
     "クチバシソコエビ属の一種",
-    "Bathyporeia属の一種（仮称）",
-    "アゴナガヨコエビの仲間",
+    "ヒサシソコエビ上科の一種",
+    "エンマヨコエビ科の一種",
+    "アゴナガヨコエビ属の一種",
     "ウシロマエソコエビ属の一種",
     "シリアゲソコエビ属の一種",
-    "Scopelocheirus属の一種",
+    "クツミガキソコエビ属の一種",
     "ツノフトソコエビ属の一種",
     "ツノフトソコエビモドキ属の一種",
     "シデムシソコエビ属の一種"
-];
-  const nicknameIndices = new Set([16,19,21,22,25,27,32]);
+  ];
   const kinds = speciesData.map(([name,nameJa,habitat,shape,palette,x,y,base],i) => ({
-    name,nameJa,japanese:japaneseLabels[i],nickname:nicknameIndices.has(i),
+    name,nameJa,japanese:japaneseLabels[i],
     lysianassoid:i===22||i>=31,habitat,
     where:habitats[habitat].label,shape,home:[x,y],
     limit:habitats[habitat].limit,base,pattern:i%5,
@@ -420,7 +419,7 @@
       const name=document.createElement("strong");
       name.textContent=found?k.japanese:"No. "+String(i+1).padStart(2,"0")+"　????";
       const where=document.createElement("p");
-      where.textContent=found?(k.name+" / "+k.where+(k.nickname?" · ゲーム内呼称":"")):"未採集 · "+k.where;
+      where.textContent=found?(k.name+" / "+k.where):"未採集 · "+k.where;
       info.append(name,where);
       if(found&&k.lysianassoid){
         const group=document.createElement("p");
