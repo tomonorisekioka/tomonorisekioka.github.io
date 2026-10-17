@@ -304,9 +304,9 @@
     if(state!=="playing")return;
     // The invisible water current created by the moving net pushes animals.
     // Use swept-segment distance, not only the end pointer position, so a fast swipe cannot skip the animal.
-    const radius=16+Math.min(18,pointer.speed*.03);
     for (const c of creatures) {
       if(c.hidden)continue;
+      const radius=12+7*c.scale+Math.min(18,pointer.speed*.03);
       const hit=segmentDistance(c.x,c.y,ax,ay,x,y);
       if(hit.d>radius)continue;
       const weight=1-hit.d/radius;
@@ -372,11 +372,12 @@
     if(state!=="playing"||net)return;
     const x=pointer.x,y=pointer.y,shotAt=performance.now();
     const tooFast=pointer.speed>165;
-    let best=null,bestD=30;
+    let best=null,bestD=Infinity;
     for(const c of creatures) {
       if(c.hidden)continue;
       const d=length(c.x-x,c.y-y);
-      if(d<bestD){best=c;bestD=d}
+      const reach=11+13*c.scale;
+      if(d<reach&&d<bestD){best=c;bestD=d}
     }
     net={x,y,t:.17,age:0,target:best,tooFast,touch:pointer.touch};
     shots.push({x,y,t:.35});
@@ -403,15 +404,25 @@
       const c=n.target;
       const dx=c.x-n.x,dy=c.y-n.y;
       // The net closes at its original position after the creature darts ~10–20 px.
-      const reach=n.touch?12.5:9.5;
+      const reach=(n.touch?10.5:8)+5*c.scale;
       if(length(dx,dy)<=reach){
-        caught++;discovered.add(c.kind);c.hidden=true;
+        caught++;discovered.add(c.kind);roundFound.add(c.kind);c.hidden=true;
+        const previous=records[c.kind]||{count:0,big:0,small:0,large:"",mini:false};
+        const badge=crownFor(c.ratio);
+        previous.count++;
+        previous.big=Math.max(previous.big,c.ratio);
+        previous.small=previous.count===1?c.ratio:Math.min(previous.small,c.ratio);
+        let firstCrown="";
+        if(badge==="mini"&&!previous.mini){previous.mini=true;firstCrown="♛ ミニ金冠！";}
+        if(badge==="gold"&&previous.large!=="gold"){previous.large="gold";firstCrown="♛ 大型金冠！";}
+        if(badge==="silver"&&!previous.large){previous.large="silver";firstCrown="♛ 大型銀冠！";}
+        records[c.kind]=previous;saveRecords();
         for(let i=0;i<14;i++)particles.push({x:c.x,y:c.y,vx:rand(-28,28),vy:rand(-32,10),life:rand(.3,.7),color:i%2?"#fcdfaa":"#d6fff4"});
         const name=kinds[c.kind].name;
-        showToast("GET! "+name+" を採集！");
+        showToast("GET! "+name+" "+c.ratio.toFixed(2)+"×"+(firstCrown?" "+firstCrown:""));
         ui.caught.textContent=String(caught);
-        ui.species.textContent=discovered.size+" / 6";
-        renderCollection();
+        ui.species.textContent=roundFound.size+" / "+SPECIES_TOTAL;
+        updateCrownDisplay();renderCollection();
         // More amphipods remain at the habitat for another try.
         const id=c.id,kind=c.kind;
         window.setTimeout(()=>{if(state==="playing") {
@@ -441,9 +452,10 @@
         if(pointer.active){
           const dx=c.x-pointer.x,dy=c.y-pointer.y;
           let d=length(dx,dy);
-          if(d<22){
+          const pressureRadius=18+6*c.scale;
+          if(d<pressureRadius){
             if(d<.1)d=.1;
-            const pressure=(1-d/22)*(26+Math.min(pointer.speed*.6,110));
+            const pressure=(1-d/pressureRadius)*(26+Math.min(pointer.speed*.6,110));
             c.vx+=dx/d*pressure*dt;c.vy+=dy/d*pressure*dt;
             if(length(c.vx,c.vy)>12){c.fleeX=c.vx;c.fleeY=c.vy;}
           }
@@ -561,7 +573,7 @@
       const shakeY=shaking?Math.cos(t*160+c.phase)*c.shiverPower*.65*(c.shiver/.24):0;
       const x=Math.round(c.x+shakeX), y=Math.round(c.y+shakeY);
       ctx.save();ctx.translate(x,y);
-      if(c.facing<0)ctx.scale(-1,1);
+      ctx.scale((c.facing<0?-1:1)*c.scale,c.scale);
       if(c.escapeGlow>0){
         ctx.globalAlpha=clamp(c.escapeGlow*1.4,0,.32);
         ctx.fillStyle="#d8ffed";ctx.fillRect(-16,-12,32,24);ctx.globalAlpha=1;
