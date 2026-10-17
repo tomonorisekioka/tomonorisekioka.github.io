@@ -41,16 +41,13 @@
 
 ## 3. ビゼー『カルメン：闘牛士の歌』 / Toreador Song
 
-- 原曲：Georges Bizet、1875年作。
-- 実際に使用した歌唱・弦楽器の音符データ：[CostardRouge / system-g — bizet-carmen-toreador.txt](https://github.com/CostardRouge/system-g/blob/main/public/player/scores/bizet-carmen-toreador.txt)。
-- このリポジトリの `package.json` は `"license": "MIT"` ですが、確認時に独立した `LICENSE` ファイルは見つからず、**個別の楽譜データがそのライセンスの対象であることは未確認**です。
-- フランスの独自音律用に記された音符を平均律のMIDI音高・音価へ変換し、ゲーム用の伴奏を付けています。
-- **原典譜を受領（2026-10-17）**：利用者から `IMSLP517383-PMLP15769-Bizet_Carmen_Nr.01_Overture_fs_(etc).pdf` の提供あり。PDFは**583ページ**の総譜全体（先頭150ページだけではない）。『Couplets』（第2幕No.14、エスカミーリョの「闘牛士の歌」）は**PDFの214～227ページ／印刷ページ211～224**。PDFの228ページから次の `RÉCIT` が始まる。
-- IMSLPの[ファイルNo.517383](https://imslp.org/wiki/Special:ReverseLookup/517383)は **Choudens初版（1877年頃、plate A.C.3795）の復刻**。1994年Könemann再刊（K 1005）。IMSLP上の表記は **Public Domain**。
-- 14ページを抜粋した照合用の譜面を作成（スキャン画像自体は改変しない）。原典の歌唱譜・オーケストレーションの構造と照合可能になった。
-- **監査結果：原典入手済み／音符データの完全な独自採譜は未実施。** 現在のゲームには引き続きSystème Gのデータが残っている。原典を入手した事実だけで、そのデータの再利用条件が明確になったとは扱わない。
-- **2026-10-17 作業進捗**：原典p.216の歌唱開始2小節について、音高・音価・休符を独立に読み取り、4/4の拍数検査とMIDI/MusicXML・試聴音源の試作を実施。2小節目の装飾音・タイ・臨時記号は未検証で、**全曲採譜・公開音源差し替えは未完了**。経過は [research/carmen-original-score-progress.md](research/carmen-original-score-progress.md) に記録。
-- 注意：以前のプログラムコメントには、Mutopia Project の **Carmen Prelude（CC BY-SA 2.5）**を音符の直接の出典とする誤記がありました。現在のこの曲のデータは **MutopiaのPrelude譜面を使用していません**。その誤記は修正しました。
+- 原曲：Georges Bizet、1875年作。保護期間満了。
+- **2026-10-17 の新しい音符データ**：PDMX（Long et al., 2024、データセット [Zenodo DOI:10.5281/zenodo.15571083](https://zenodo.org/records/15571083)、CC BY 4.0）を由来とする22トラックのオーケストラMIDI。実際の音符データは以下の[公開GitHubミラー](https://github.com/Johaan01/flyback-midi/blob/main/musicas/classicos/Fran%C3%A7a/Bizet%20(G.)/Carmen%20-%20Toreador%20Song.mid)から取得。
+- ミラーの[creditos.json](https://github.com/Johaan01/flyback-midi/blob/main/musicas/classicos/creditos.json) は `Carmen - Toreador Song.mid` を **CC0** と表示。元の譜面制作者は **marty strasinger**、[MuseScoreの対象スコア](https://musescore.com/user/340306/scores/2274466) を出典としている。
+- MIDI検証：22トラック、480 ticks/quarter、テンポ変更36件、10,556個のNoteOn、約318.24秒。エスカミーリョ歌唱トラックは521音を収録。ゲーム用にエスカミーリョ、ヴァイオリン第1、チェロ、コントラバス、トロンボーン、フラスキータ、テノール合唱の7パートから3,051音を抽出。テンポ変更、発音時刻・音価を保持し、Web Audioで独自8bit合成。既存の録音は不使用。
+- この新しい演奏用データは `game-carmen-pdmx.js`、再生側の参照は `game-music-data.js`。**従来のSystème Gによる採譜配列は完全に削除済み**。
+- ユーザー提供の歴史的原典：[IMSLP File 517383](https://imslp.org/wiki/Special:ReverseLookup/517383)、PDF pp.214–227 の「Couplets」。音楽史的・譜面照合用資料として保持。かつて取り組んだ独自採譜の進捗は[研究メモ](research/carmen-original-score-progress.md)参照。
+- **権利について残る留保**：PDMXでは公開ライセンスと楽譜ファイル内部のライセンスに不一致がある事例があり、公式は `no_license_conflict` の利用を推奨している。**今回の特定スコアが同サブセットに含まれるかはまだ確認できていない**。従ってミラーのCC0表示を根拠に実装したが、「完全に権利監査済み」とは表示しない。PDMXデータセットの帰属は継続して明示する。
 
 ## 現状の整理
 
@@ -58,7 +55,7 @@
 | --- | --- | --- | --- |
 | グリーグ『朝』 | 保護期間満了 | Noctave CC0（グリーグ本人のピアノ版） | **置換・確認済み** |
 | サティ『ジムノペディ第1番』 | 保護期間満了 | Mutopia: Public Domain | **確認済み** |
-| ビゼー『闘牛士の歌』 | 保護期間満了 | Système G採譜データ | **譜面データのライセンス範囲が未確定** |
+| ビゼー『闘牛士の歌』 | 保護期間満了 | PDMX由来MIDI、ミラーはCC0表示 | **置換済み・個別ライセンス不一致の有無は未検証** |
 | ゲーム内の波形合成 | — | Web Audioで新たに合成 | 第三者の録音は使用していない |
 
 以上は出典の監査記録であり、他者の編曲・採譜データに対してユーザーへ再利用権を付与するライセンス文書ではありません。権利者による正式な許諾書でもありません。
