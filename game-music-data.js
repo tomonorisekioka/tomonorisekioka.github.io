@@ -1,11 +1,20 @@
-/* Public-domain compositions; game-specific chiptune scores.
-  The Gymnopédie melody follows Mutopia's public-domain transcription of Satie's score
-  (https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=37).
-  Toreador refrain follows Bizet's original Prelude score (Schirmer 1895), as reproduced
-  in Mutopia's Carmen Prelude (Alex O'S, CC BY-SA 2.5):
-  https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=635
-  The soundtrack is newly synthesized; no existing audio recording or MIDI recording used.
-  Score arrangements are abbreviated/varied game editions, not verbatim orchestration.
+/* Classical game soundtrack — music source and rights provenance.
+   Underlying compositions: Edvard Grieg, Erik Satie and Georges Bizet
+   (copyright terms expired in Japan).
+   "Morning Mood": note data adapted from Diethart Stecher's 2025 4-part
+   arrangement hosted at github.com/cellist/Lilypond-Sheet-Music. Modern
+   arrangement rights are distinct from those of Grieg's original piece.
+   The repository README permits use and sharing, but no unambiguous formal
+   license covering adaptation of this specific arrangement was found.
+   "Gymnopedie No. 1": Evin Robertson's Mutopia Project LilyPond typesetting
+   explicitly identifies its license as "Public Domain".
+   "Toreador Song": transcription from CostardRouge/system-g, file
+   public/player/scores/bizet-carmen-toreador.txt. The code package
+   identifies MIT, but this does not by itself verify rights to every score.
+   (Earlier claims that this data came from a Mutopia Carmen Prelude score
+   were incorrect; the transcription is NOT taken from that source.)
+   All sound is synthesized locally; no third-party recordings are embedded.
+   See MUSIC_SOURCES.md for source links and rights audit.
 */
 (() => {
   "use strict";
