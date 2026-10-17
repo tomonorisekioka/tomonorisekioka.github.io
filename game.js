@@ -51,7 +51,7 @@
   // [genus label, Japanese nickname, habitat, silhouette, palette, x, y, base size]
   const speciesData = [
     ["Cerapus sp.","ホソツツムシ","grass","tube",0,55,142,.86],
-    ["Ampelisca sp.","クチバシソコエビ","sand","curve",1,157,184,.86],
+    ["Ampelisca sp.","スガメの仲間","sand","curve",1,157,184,.86],
     ["Stenothoe sp.","ずんぐりしたヨコエビ","reef","hump",2,237,129,.72],
     ["Caprella sp.","ワレカラ","rope","caprella",3,305,63,.89],
     ["Gammaropsis sp.","海藻のヨコエビ","algae","curve",4,111,97,.81],
@@ -59,7 +59,7 @@
     ["Jassa sp.","棲管にすむヨコエビ","rope","tube",6,306,86,.66],
     ["Ericthonius sp.","ロープの棲管ヨコエビ","rope","long",7,315,109,.69],
     ["Aora sp.","雄の腕が目立つヨコエビ","grass","long",8,81,133,.77],
-    ["Photis sp.","アマモに付くヨコエビ","grass","tube",9,122,131,.71],
+    ["Photis sp.","砂泥底の棲管にすむヨコエビ","sand","tube",9,166,183,.71],
     ["Ischyrocerus sp.","細身のヨコエビ","algae","needle",10,139,86,.72],
     ["Monocorophium sp.","小さな棲管ヨコエビ","grass","squat",11,53,117,.67],
     ["Leucothoe sp.","ふくらんだヨコエビ","reef","hump",12,259,145,.85],
@@ -74,15 +74,52 @@
     ["Harpinia sp.","砂泥にすむヨコエビ","sand","sand",13,135,190,.69],
     ["Haustorius sp.","砂を掘るヨコエビ","sand","squat",5,196,188,1.12],
     ["Bathyporeia sp.","細長い砂底ヨコエビ","sand","long",8,249,185,.8],
-    ["Byblis sp.","砂のクチバシソコエビ","sand","needle",14,273,185,.84],
+    ["Byblis sp.","砂底のスガメの仲間","sand","needle",14,273,185,.84],
     ["Tiron sp.","棘のあるヨコエビ","algae","spiny",11,169,119,1.08],
     ["Rostroculodes sp.","小さなクチバシヨコエビ","sand","needle",4,119,183,.72],
     ["Pacifoculodes sp.","砂底の小型ヨコエビ","sand","curve",2,280,190,.62],
     ["Dexamine sp.","背中の棘のヨコエビ","grass","spiny",3,64,100,.89],
     ["Pontogeneia sp.","泳ぐヨコエビ","algae","long",1,177,144,1.03]
   ];
+  // Where a recognized Japanese genus/family name is available, use it instead of
+  // inventing a Japanese species name for a genus-level (sp.) identification.
+  // Entries marked as nickname are descriptive game labels, not taxonomic vernacular names.
+  const japaneseLabels = [
+    "ホソツツムシ属の一種",
+    "スガメ属の一種",
+    "タテソコエビ属の一種",
+    "ワレカラ属の一種",
+    "ソコエビ属の一種",
+    "マルソコエビ属の一種",
+    "カマキリヨコエビ属の一種",
+    "ホソヨコエビ属の一種",
+    "ヒメユンボソコエビ属の一種",
+    "クダオソコエビ属の一種",
+    "カマキリヨコエビ科の一種",
+    "ドロクダムシ類の一種",
+    "マルハサミヨコエビ属の一種",
+    "トゲヨコエビ属の一種",
+    "タテソコエビ科の一種",
+    "イソヨコエビ属の一種",
+    "岩陰の大型ヨコエビ",
+    "メリタヨコエビ科の一種",
+    "モクズヨコエビ科の一種",
+    "エンマヨコエビ科の一種",
+    "ヒサシソコエビ属の一種",
+    "砂泥に潜むヨコエビ",
+    "砂を掘るヨコエビ",
+    "砂底の細長いヨコエビ",
+    "スガメソコエビ科の一種",
+    "トゲのあるヨコエビ",
+    "クチバシソコエビ科の一種",
+    "小型のクチバシソコエビ",
+    "エンマヨコエビ科の一種",
+    "アゴナガヨコエビの仲間"
+];
+  const nicknameIndices = new Set([16,21,22,23,25,27]);
   const kinds = speciesData.map(([name,nameJa,habitat,shape,palette,x,y,base],i) => ({
-    name,nameJa,habitat,where:habitats[habitat].label,shape,home:[x,y],
+    name,nameJa,japanese:japaneseLabels[i],nickname:nicknameIndices.has(i),habitat,
+    where:habitats[habitat].label,shape,home:[x,y],
     limit:habitats[habitat].limit,base,pattern:i%5,
     color:palettes[palette][0],light:palettes[palette][1],dark:palettes[palette][2]
   }));
@@ -239,9 +276,9 @@
       }else art.textContent="?";
       const info=document.createElement("div");info.className="specimen-copy";
       const name=document.createElement("strong");
-      name.textContent=found?k.name:"No. "+String(i+1).padStart(2,"0")+"　????";
+      name.textContent=found?k.japanese:"No. "+String(i+1).padStart(2,"0")+"　????";
       const where=document.createElement("p");
-      where.textContent=found?(k.nameJa+" / "+k.where):"未採集 · "+k.where;
+      where.textContent=found?(k.name+" / "+k.where+(k.nickname?" · ゲーム内呼称":"")):"未採集 · "+k.where;
       info.append(name,where);
       if(found&&rec){
         const sizes=document.createElement("p");sizes.className="specimen-sizes";
@@ -419,7 +456,7 @@
         if(badge==="silver"&&!previous.large){previous.large="silver";firstCrown="♛ 大型銀冠！";}
         records[c.kind]=previous;saveRecords();
         for(let i=0;i<14;i++)particles.push({x:c.x,y:c.y,vx:rand(-28,28),vy:rand(-32,10),life:rand(.3,.7),color:i%2?"#fcdfaa":"#d6fff4"});
-        const name=kinds[c.kind].name;
+        const name=kinds[c.kind].japanese;
         showToast("GET! "+name+" "+c.ratio.toFixed(2)+"×"+(firstCrown?" "+firstCrown:""));
         ui.caught.textContent=String(caught);
         ui.species.textContent=roundFound.size+" / "+SPECIES_TOTAL;
