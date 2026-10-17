@@ -9,6 +9,19 @@
 - このサイトではブラウザの Web Audio API により波形を生成します。商用録音、配信音源、市販MIDI、既存の録音サンプルは使用していません。
 - **原曲がパブリックドメインであっても、独立に創作された現代の編曲は別の権利を持つことがあります。** この区別は必須です。
 
+## 追加資料の受領・版の確認（2026-10-17）
+
+- ユーザーが提供したPDF：`IMSLP579108-PMLP2533-Grieg_Edvard_Peer_Gynt_Suite_No_1_by_DigitalScores(1).pdf`
+- 42ページ。『朝』（Morgenstimmung）は**PDFの4–18ページ**、続いて組曲の残りの楽章。
+- PDFのメタデータは **DigitalScores / 2019年6月27日**。1888年の原典譜を撮影した画像ではなく、現代の浄書版。
+- IMSLPの **ファイルNo.579108** の登録ライセンスは **CC BY-NC 4.0**。原曲のパブリックドメイン状態と、この版の表示ライセンスを混同しない。
+- 目的は権利の曖昧さの解消なので、**このDigitalScores版は音符データの置換元として採用しない**。比較参照だけに留める。
+- 出典を置換する場合の候補：
+  - [IMSLP #810456](https://imslp.org/wiki/Peer_Gynt_Suite_No.1,_Op.46_(Grieg,_Edvard)) — 1888年1月20日付の自筆総譜（Public Domain）
+  - 同ページ **#912194 / #521719** — 1888年Peters初版の復刻総譜（Public Domain）
+  - [Sibley Music Library](https://urresearch.rochester.edu/institutionalPublicationPublicView.action?institutionalItemVersionId=16183) — 歴史的Peters版のピアノ連弾譜（Public Domainとして公開）
+- 原典の音符照合と置換は**未実施**。現時点のゲーム音源は既存の編曲由来で、権利確認の課題は残っている。
+
 ## 1. グリーグ『朝』 / Morning Mood
 
 - 原曲：Edvard Grieg — *Peer Gynt*、著作権保護期間満了。
