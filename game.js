@@ -762,16 +762,54 @@
       }
     }
   }
-  function broadKelp(x,base,height,t){
-    for(let h=0;h<height;h+=4){
-      const shift=Math.round(Math.sin(t*.46+x*.1+(height-h)*.032)*5);
-      const xx=x+shift;
-      rect(xx,base-h,2,5,"#526849");
-      if(h>12&&h%16<4){
-        rect(xx-15,base-h+1,15,5,"#71875a");
-        rect(xx+2,base-h-3,16,5,"#59744c");
-        rect(xx+7,base-h-4,9,2,"#8e9c63");
+  // Stylized North Atlantic kelps. Blades grow from the tip of the stipe,
+  // rather than from alternating nodes all along it.
+  function atlanticDigitataKelp(x,base,height,t){
+    const stipeH=Math.round(height*.42);
+    const sway=Math.sin(t*.44+x*.08)*2;
+    const stemX=Math.round(x+sway);
+    // Branched holdfast and a relatively long, upright stipe.
+    rect(stemX-5,base-2,11,3,"#4b493c");
+    rect(stemX-4,base-5,2,4,"#4b493c");
+    rect(stemX+4,base-5,2,4,"#4b493c");
+    for(let h=0;h<stipeH;h+=3){
+      const bend=Math.round(Math.sin(t*.45+x*.06+h*.05)*2*sway/3);
+      rect(stemX+bend,base-h,3,4,"#556d4d");
+    }
+    // A single transition at the stipe apex, splitting into finger-like blades.
+    const crownY=base-stipeH;
+    rect(stemX-2,crownY-4,7,6,"#74895d");
+    const fingers=[[-14,.85],[-8,1.03],[-1,1.16],[7,1.0],[15,.82]];
+    fingers.forEach(([spread,factor],i)=>{
+      const bladeH=Math.round((height-stipeH)*factor);
+      for(let h=0;h<bladeH;h+=3){
+        const xx=stemX+Math.round(spread*h/bladeH)+
+          Math.round(Math.sin(t*.5+i*.8+h*.11)*1.6);
+        const yy=crownY-h;
+        rect(xx,yy,i===2?4:3,4,i%2?"#708657":"#5c784d");
+        if(h>8&&h%15<3)rect(xx+1,yy,2,2,"#91a36a");
       }
+    });
+  }
+  function atlanticSugarKelp(x,base,height,t){
+    const stemX=Math.round(x+Math.sin(t*.4+x*.1)*1.5);
+    const stipeH=Math.round(height*.24);
+    rect(stemX-4,base-2,9,3,"#4b4639");
+    rect(stemX-3,base-5,2,4,"#4b4639");
+    rect(stemX+3,base-5,2,4,"#4b4639");
+    for(let h=0;h<stipeH;h+=3){
+      rect(stemX+Math.round(Math.sin(t*.45+h*.08)*1.5),
+        base-h,2,4,"#59724e");
+    }
+    // One long, softly ruffled ribbon blade (not pinnate branches).
+    const bladeH=height-stipeH;
+    for(let h=0;h<bladeH;h+=3){
+      const width=Math.max(5,Math.round(12-4*h/bladeH));
+      const xx=stemX-Math.floor(width/2)+
+        Math.round(Math.sin(t*.48+h*.10+x*.04)*2.5);
+      const yy=base-stipeH-h;
+      rect(xx,yy,width,4,h%9<5?"#70885a":"#5b754f");
+      if(h%12<3)rect(xx+1,yy,Math.max(2,width-2),1,"#96a973");
     }
   }
   function drawMusselBed(x,y){
@@ -866,8 +904,9 @@
       rect(x,y,w,h,"#708c91"));
     drawMusselBed(209,151);
     drawMusselBed(246,163);
-    for(let i=0;i<5;i++)broadKelp(14+i*19,182,61+(i*13)%43,t);
-    for(let i=0;i<6;i++)kelp(105+i*13,180,25+(i*11)%37,t,"#607858");
+    // Digitata-like split fronds and latissima-like ribbon fronds.
+    for(let i=0;i<4;i++)atlanticDigitataKelp(18+i*22,182,58+(i*11)%26,t);
+    for(let i=0;i<3;i++)atlanticSugarKelp(109+i*19,181,44+(i*9)%18,t);
     for(let i=0;i<24;i++){
       const x=(i*47+15)%360,y=177+(i*11)%30;
       rect(x,y,3+(i%2),2,i%3?"#849399":"#bcc1af");
