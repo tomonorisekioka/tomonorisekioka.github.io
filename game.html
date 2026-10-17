@@ -19,8 +19,8 @@
   </script>
   <link rel="stylesheet" href="style.css?v=20261017-dark1">
   <link rel="stylesheet" href="game.css?v=20261017-lysianassoid1">
-  <script defer src="game-music.js?v=20261017-morning1"></script>
-  <script defer src="game.js?v=20261017-lysianassoid1"></script>
+  <script defer src="game-music.js?v=20261017-three-songs1"></script>
+  <script defer src="game.js?v=20261017-three-songs1"></script>
 </head>
 <body>
   <a class="skip-link" href="#play">ゲームへスキップ</a>
@@ -61,7 +61,7 @@
         </div>
         <p id="region-description">亜寒帯と温帯の境界をイメージした海 · 29タイプが出現</p>
         <div class="music-controls" role="group" aria-label="BGM設定">
-          <span class="music-label">♪ 8BIT BGM · グリーグ「朝」</span>
+          <span class="music-label" id="music-label">♪ 8BIT BGM · グリーグ「朝」</span>
           <button type="button" id="music-toggle" aria-pressed="true" aria-label="BGMをミュートする">♫ ON</button>
           <label for="music-volume">音量</label>
           <input type="range" id="music-volume" min="0" max="100" value="26" step="1" aria-label="BGMの音量">
@@ -114,7 +114,7 @@
       </div>
       <div class="collection-grid" id="collection-grid" aria-label="選択した海域の採集図鑑"></div>
       <p class="collection-note">冠は各タイプの標準サイズに対するゲーム内倍率で判定しています（実測体長ではありません）。図鑑のサイズ記録・冠は海域ごとに分けてこのブラウザに保存されます。このゲームは厚岸・日本の温帯沿岸・北大西洋をイメージしたフィクションで、フトヒゲソコエビ上科（Lysianassoidea）のスカベンジャーも登場します。ただし全ての仲間が腐肉食というわけではありません。日本語名は確認できた属・科の和名を優先し、それ以外は「ゲーム内呼称」と区別しています。姿・生息場所はゲーム向けにデフォルメしており、各海域の出演属は厳密な現地採集リストではなく、同所的な出現や生息分布を証明するものではありません。</p>
-      <p class="music-credit">♪ BGM: Edvard Grieg, <i>Morning Mood</i> from <i>Peer Gynt</i> — パブリックドメイン原曲をWeb Audioで8bitアレンジ（録音素材不使用）。BGMは採集開始後に再生され、いつでもミュートできます。</p>
+      <p class="music-credit" id="music-credit">♪ グリーグ「朝」／サティ「ジムノペディ第1番」／ビゼー「カルメン：闘牛士の歌」。海域別の8bit BGM。原曲の旋律をもとにした短いループです（録音素材不使用）。</p>
     </section>
   </main>
   <footer class="footer"><div class="wrap footer-inner"><span>© 2026 Tomonori Sekioka · A tiny interactive field note</span><a href="index.html">研究者サイトに戻る ↗</a></div></footer>
