@@ -69,15 +69,15 @@
     ["Maera sp.","大きな顎のヨコエビ","reef","thick",7,220,156,1.09],
     ["Melita sp.","アマモ場のヨコエビ","grass","curve",6,85,154,.93],
     ["Hyale sp.","緑藻につくヨコエビ","algae","thick",10,152,112,.88],
-    ["Paradexamine sp.","とげとげヨコエビ","algae","spiny",9,116,121,.91],
+    ["Guernea sp.","海藻の小型ヨコエビ","algae","squat",9,116,121,.71],
     ["Phoxocephalus sp.","とがった頭のヨコエビ","sand","needle",12,178,184,.78],
     ["Harpinia sp.","砂泥にすむヨコエビ","sand","sand",13,135,190,.69],
-    ["Haustorius sp.","砂を掘るヨコエビ","sand","squat",5,196,188,1.12],
-    ["Bathyporeia sp.","細長い砂底ヨコエビ","sand","long",8,249,185,.8],
+    ["Opisa sp.","厚岸沖でも記録されたヨコエビ","reef","hump",5,258,148,1.06],
+    ["Haustorioides sp.","波打ち際の砂にもぐるヨコエビ","sand","sand",8,249,185,.84],
     ["Byblis sp.","砂底のスガメの仲間","sand","needle",14,273,185,.84],
     ["Tiron sp.","棘のあるヨコエビ","algae","spiny",11,169,119,1.08],
-    ["Rostroculodes sp.","小さなクチバシヨコエビ","sand","needle",4,119,183,.72],
-    ["Pacifoculodes sp.","砂底の小型ヨコエビ","sand","curve",2,280,190,.62],
+    ["Monoculodes sp.","砂泥底のクチバシソコエビ","sand","needle",4,119,183,.8],
+    ["Synchelidium sp.","砂底を動くヨコエビ","sand","curve",2,280,190,.7],
     ["Dexamine sp.","背中の棘のヨコエビ","grass","spiny",3,64,100,.89],
     ["Pontogeneia sp.","泳ぐヨコエビ","algae","long",1,177,144,1.03]
   ];
@@ -104,19 +104,19 @@
     "岩陰の大型ヨコエビ",
     "メリタヨコエビ科の一種",
     "モクズヨコエビ科の一種",
-    "エンマヨコエビ科の一種",
+    "テッポウダマ属の一種",
     "ヒサシソコエビ属の一種",
     "砂泥に潜むヨコエビ",
-    "砂を掘るヨコエビ",
-    "砂底の細長いヨコエビ",
+    "Opisa属の一種",
+    "ナミノリソコエビ属の一種",
     "スガメソコエビ科の一種",
     "トゲのあるヨコエビ",
     "クチバシソコエビ科の一種",
-    "小型のクチバシソコエビ",
-    "エンマヨコエビ科の一種",
+    "クチバシソコエビ属の一種",
+    "サンパツソコエビ属の一種",
     "アゴナガヨコエビの仲間"
 ];
-  const nicknameIndices = new Set([16,21,22,23,25,27]);
+  const nicknameIndices = new Set([16,21,22,25]);
   const kinds = speciesData.map(([name,nameJa,habitat,shape,palette,x,y,base],i) => ({
     name,nameJa,japanese:japaneseLabels[i],nickname:nicknameIndices.has(i),habitat,
     where:habitats[habitat].label,shape,home:[x,y],
@@ -124,7 +124,9 @@
     color:palettes[palette][0],light:palettes[palette][1],dark:palettes[palette][2]
   }));
   const SPECIES_TOTAL = kinds.length;
-  const RECORD_KEY = "ts-amphipod-collection-v2";
+  const RECORD_KEY = "ts-amphipod-collection-v3";
+  const LEGACY_RECORD_KEY = "ts-amphipod-collection-v2";
+  const RENAMED_SLOTS = new Set([19,22,23,26,27]);
   // Like MH: small gold = tiny crown; large silver/gold = oversized specimen.
   // Ratios are relative to each morphotype's standard pixel size, not real measurements.
   function crownFor(ratio) {
@@ -215,11 +217,16 @@
   }
   function loadRecords() {
     try{
-      const saved=JSON.parse(localStorage.getItem(RECORD_KEY)||"{}");
+      // Earlier records were indexed by specimen slot. Replacing a genus must not
+      // silently transfer its crowns to a different genus occupying the same slot.
+      const current=localStorage.getItem(RECORD_KEY);
+      const migrating=current===null;
+      const saved=JSON.parse(current || localStorage.getItem(LEGACY_RECORD_KEY) || "{}");
       if(saved&&typeof saved==="object"&&!Array.isArray(saved)){
         for(const [key,item] of Object.entries(saved)){
           const n=Number(key);
           if(!Number.isInteger(n)||n<0||n>=SPECIES_TOTAL||!item||typeof item!=="object")continue;
+          if(migrating&&RENAMED_SLOTS.has(n))continue;
           const count=Number(item.count)||0,big=Number(item.big)||0,small=Number(item.small)||0;
           if(count<=0)continue;
           records[n]={
@@ -231,6 +238,7 @@
           discovered.add(n);
         }
       }
+      if(migrating)saveRecords(); // Keep the 25 unchanged genus records in v3.
     }catch(_){/* Game still runs in private browsing or when storage is blocked. */}
   }
   function saveRecords() {
