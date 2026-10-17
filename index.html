@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light">
-  <meta name="theme-color" content="#102d40">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f7faf9">
   <meta name="description" content="関岡寛知（Tomonori Sekioka）の研究者プロフィール。海洋底生生物の群集生態学・生物地理学・底生ヨコエビ類の研究とフィールド・教育活動。">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://tomonorisekioka.github.io/">
@@ -15,7 +15,16 @@
   <meta property="og:url" content="https://tomonorisekioka.github.io/">
   <meta property="og:image" content="https://tomonorisekioka.github.io/assets/14-akkeshi-winter.webp">
   <title>関岡寛知 | Tomonori Sekioka</title>
-  <link rel="stylesheet" href="style.css?v=20261015e">
+  <script>
+  // Apply a saved manual preference before painting; otherwise follow the OS.
+  (function () {
+    try {
+      var theme = localStorage.getItem('ts-theme');
+      if (theme === 'light' || theme === 'dark') document.documentElement.setAttribute('data-theme', theme);
+    } catch (e) { /* The system theme still works if storage is unavailable. */ }
+  })();
+  </script>
+  <link rel="stylesheet" href="style.css?v=20261017-dark1">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -42,6 +51,14 @@
       <nav aria-label="ページ内ナビゲーション">
         <a href="#about">About</a><a href="#research">Research</a><a href="#publications">Publications</a><a href="#presentations">Talks</a><a href="#photographs">Photos</a><a href="#teaching">Teaching</a><a href="#outreach">Media</a><a href="#links">Contact</a>
       </nav>
+      <details class="theme-menu" id="theme-menu">
+        <summary aria-label="表示テーマを選択" title="表示テーマを選択"><span class="theme-glyph" aria-hidden="true">◐</span><span id="theme-current">Auto</span><span class="theme-chevron" aria-hidden="true">⌄</span></summary>
+        <div class="theme-options" role="group" aria-label="表示テーマ">
+          <button type="button" data-theme-option="auto" aria-pressed="true">Auto · OSに合わせる</button>
+          <button type="button" data-theme-option="light" aria-pressed="false">☀ Light</button>
+          <button type="button" data-theme-option="dark" aria-pressed="false">☾ Dark</button>
+        </div>
+      </details>
     </div>
   </header>
   <main id="main">
@@ -239,5 +256,53 @@
     </section>
   </main>
   <footer class="footer"><div class="wrap footer-inner"><span>© 2026 Tomonori Sekioka</span><span>Photographs: reuse by permission only · <a href="#photo-policy">Photo policy</a></span></div></footer>
+  <script>
+  (function () {
+    var root = document.documentElement;
+    var menu = document.getElementById('theme-menu');
+    var label = document.getElementById('theme-current');
+    var glyph = menu.querySelector('.theme-glyph');
+    var options = menu.querySelectorAll('[data-theme-option]');
+    var themeColor = document.querySelector('meta[name="theme-color"]');
+    var system = window.matchMedia('(prefers-color-scheme: dark)');
+    var mode = root.getAttribute('data-theme') || 'auto';
+
+    function refresh() {
+      root.style.colorScheme = mode === 'auto' ? (system.matches ? 'dark' : 'light') : mode;
+      label.textContent = mode === 'auto' ? 'Auto' : (mode === 'dark' ? 'Dark' : 'Light');
+      glyph.textContent = mode === 'auto' ? '◐' : (mode === 'dark' ? '☾' : '☀');
+      if (themeColor) themeColor.setAttribute('content',
+        (mode === 'dark' || (mode === 'auto' && system.matches)) ? '#101e28' : '#f7faf9');
+      options.forEach(function (button) {
+        button.setAttribute('aria-pressed', String(button.getAttribute('data-theme-option') === mode));
+      });
+    }
+    options.forEach(function (button) {
+      button.addEventListener('click', function () {
+        mode = button.getAttribute('data-theme-option');
+        if (mode === 'auto') root.removeAttribute('data-theme');
+        else root.setAttribute('data-theme', mode);
+        try {
+          if (mode === 'auto') localStorage.removeItem('ts-theme');
+          else localStorage.setItem('ts-theme', mode);
+        } catch (e) { /* Keep the current selection for this page. */ }
+        refresh();
+        menu.open = false;
+        menu.querySelector('summary').focus();
+      });
+    });
+    system.addEventListener('change', function () { if (mode === 'auto') refresh(); });
+    document.addEventListener('click', function (event) {
+      if (menu.open && !menu.contains(event.target)) menu.open = false;
+    });
+    menu.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && menu.open) {
+        menu.open = false;
+        menu.querySelector('summary').focus();
+      }
+    });
+    refresh();
+  })();
+  </script>
 </body>
 </html>
