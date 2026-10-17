@@ -18,8 +18,8 @@
     })();
   </script>
   <link rel="stylesheet" href="style.css?v=20261017-dark1">
-  <link rel="stylesheet" href="game.css?v=20261017b">
-  <script defer src="game.js?v=20261017c"></script>
+  <link rel="stylesheet" href="game.css?v=20261017-crowns1">
+  <script defer src="game.js?v=20261017-crowns1"></script>
 </head>
 <body>
   <a class="skip-link" href="#play">ゲームへスキップ</a>
@@ -46,7 +46,7 @@
       <div>
         <p class="eyebrow">A LITTLE FIELDWORK, UNDERWATER</p>
         <h1>ヨコエビ採集日和 <span>AMPHIPOD HUNT</span></h1>
-        <p class="game-subtitle">海藻のすきま、砂の上、岩のかげ、ブイのロープ。<br>「つかまえた！」と思った次の瞬間、するり。</p>
+        <p class="game-subtitle">海藻のすきま、砂の上、岩のかげ、ブイのロープ。<br>「つかまえた！」と思った次の瞬間、するり。<br>30タイプ、サイズいろいろ。珍しい個体には金冠・銀冠も。</p>
       </div>
       <p class="game-stamp">PIXEL FIELD NOTE <span>no. 001</span></p>
     </div>
@@ -54,7 +54,8 @@
       <div class="game-bar">
         <div class="game-stat"><span>TIME</span><strong id="time-display">00:30</strong></div>
         <div class="game-stat"><span>CAUGHT</span><strong id="catch-display">0</strong></div>
-        <div class="game-stat"><span>SPECIES</span><strong id="species-display">0 / 6</strong></div>
+        <div class="game-stat"><span>TYPES</span><strong id="species-display">0 / 30</strong></div>
+        <div class="game-stat"><span>CROWNS</span><strong id="crown-display">♛ 0</strong></div>
         <div class="game-stat game-stat-action"><button class="game-small-button" type="button" id="restart-button">↻ やり直す</button></div>
       </div>
       <div class="sea-stage" id="sea-stage">
@@ -65,7 +66,7 @@
             <h2 id="overlay-title">ヨコエビをつかまえよう。</h2>
             <p id="overlay-text">ヨコエビを見つけたらクリックして網を振る。<br>反射的に身をよじって、網をすり抜けてしまうことも。</p>
             <button type="button" class="game-start" id="play-button">採集をはじめる <span aria-hidden="true">→</span></button>
-            <p class="overlay-small">30秒で何種類つかまえられる？</p>
+            <p class="overlay-small">30秒で何タイプ採集できる？</p>
           </div>
         </div>
         <div id="game-toast" class="game-toast" role="status" aria-live="polite"></div>
@@ -77,7 +78,7 @@
       <div>
         <p class="section-number">FIELD GUIDE / 01</p>
         <h2>網のすきまを、するり。</h2>
-        <p>彼らは小さくて、思いのほかすばしっこい。クリックした瞬間にブルブルっと体を震わせ、砂や海藻の陰に逃げ込む。何度も挑戦して、いろんな生息場所のヨコエビを採集してみよう。</p>
+        <p>彼らは小さくて、思いのほかすばしっこい。速く網を近づけると水流でぬるっと移動し、クリックすればブルブル震えてすり抜ける。サイズは個体ごとに違い、とびきり大きい・小さい個体には冠が付く。30秒で採集、記録は次回へ持ち越し！</p>
       </div>
       <div class="guide-tips">
         <p><strong>01</strong> 海中にいるヨコエビを探す</p>
@@ -90,8 +91,13 @@
         <div><p class="section-number">FIELD GUIDE / 02</p><h2>採集ノート <span>COLLECTION</span></h2></div>
         <p id="collection-progress">まだ採集した個体はいません。</p>
       </div>
-      <div class="collection-grid" id="collection-grid" aria-label="採集したヨコエビの一覧"></div>
-      <p class="collection-note">このゲームは海での採集体験に着想を得たフィクションです。生き物の形や生息場所はドット絵向けにデフォルメしています。</p>
+      <div class="crown-legend" aria-label="サイズ冠の種類">
+        <span class="crown-badge gold">♛ 大型金冠 <small>1.48×以上</small></span>
+        <span class="crown-badge silver">♛ 大型銀冠 <small>1.27×以上</small></span>
+        <span class="crown-badge mini">♛ ミニ金冠 <small>0.70×以下</small></span>
+      </div>
+      <div class="collection-grid" id="collection-grid" aria-label="30タイプの採集図鑑"></div>
+      <p class="collection-note">冠は各タイプの標準サイズに対するゲーム内倍率で判定しています（実測体長ではありません）。図鑑のサイズ記録・冠はこのブラウザに保存されます。このゲームは海での採集体験に着想を得たフィクションで、属名・姿・生息場所はゲーム向けにデフォルメしており、実際の同定や地域の分布を示すものではありません。</p>
     </section>
   </main>
   <footer class="footer"><div class="wrap footer-inner"><span>© 2026 Tomonori Sekioka · A tiny interactive field note</span><a href="index.html">研究者サイトに戻る ↗</a></div></footer>
