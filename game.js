@@ -80,7 +80,12 @@
     ["Bathyporeia sp.","波のある砂底に潜るヨコエビ","sand","sand",2,280,190,.79],
     ["Dexamine sp.","背中の棘のヨコエビ","grass","spiny",3,64,100,.89],
     ["Pontogeneia sp.","泳ぐヨコエビ","algae","long",1,177,144,1.03],
-    ["Eohaustorius sp.","砂にもぐるウシロマエソコエビ","sand","sand",11,209,185,.98]
+    ["Eohaustorius sp.","砂にもぐるウシロマエソコエビ","sand","sand",11,209,185,.98],
+    ["Anonyx sp.","海底近くのスカベンジャー","sand","lysianassoid",8,174,179,1.10],
+    ["Scopelocheirus sp.","餌に集まるフトヒゲソコエビ","sand","lysianassoid",11,213,184,1.02],
+    ["Orchomene sp.","岩陰の小型スカベンジャー","reef","lysianassoid",1,228,157,.90],
+    ["Orchomenella sp.","海底で餌を探すヨコエビ","sand","lysianassoid",12,265,180,.82],
+    ["Hippomedon sp.","ずんぐりしたフトヒゲソコエビ","reef","lysianassoid",14,252,150,1.13]
   ];
   // Where a recognized Japanese genus/family name is available, use it instead of
   // inventing a Japanese species name for a genus-level (sp.) identification.
@@ -116,11 +121,17 @@
     "クチバシソコエビ属の一種",
     "Bathyporeia属の一種（仮称）",
     "アゴナガヨコエビの仲間",
-    "ウシロマエソコエビ属の一種"
+    "ウシロマエソコエビ属の一種",
+    "シリアゲソコエビ属の一種",
+    "Scopelocheirus属の一種",
+    "ツノフトソコエビ属の一種",
+    "ツノフトソコエビモドキ属の一種",
+    "シデムシソコエビ属の一種"
 ];
-  const nicknameIndices = new Set([16,19,21,22,25,27]);
+  const nicknameIndices = new Set([16,19,21,22,25,27,32]);
   const kinds = speciesData.map(([name,nameJa,habitat,shape,palette,x,y,base],i) => ({
-    name,nameJa,japanese:japaneseLabels[i],nickname:nicknameIndices.has(i),habitat,
+    name,nameJa,japanese:japaneseLabels[i],nickname:nicknameIndices.has(i),
+    lysianassoid:i===22||i>=31,habitat,
     where:habitats[habitat].label,shape,home:[x,y],
     limit:habitats[habitat].limit,base,pattern:i%5,
     color:palettes[palette][0],light:palettes[palette][1],dark:palettes[palette][2]
@@ -130,17 +141,17 @@
   const regions = {
     akkeshi: {
       label:"厚岸・北日本",subtitle:"亜寒帯と温帯の境界をイメージした海",
-      species:[0,1,2,3,4,5,7,9,10,11,13,14,17,19,20,21,22,23,24,25,26,28,29,30],
+      species:[0,1,2,3,4,5,7,9,10,11,13,14,17,19,20,21,22,23,24,25,26,28,29,30,31,32,33,34,35],
       water:["#174b69","#10526a","#0c435f","#0c3953"], sand:"#bdab8c"
     },
     temperate: {
       label:"日本・温帯沿岸",subtitle:"海藻や浅い岩礁が広がる暖かい海",
-      species:[0,1,2,3,4,6,8,9,10,11,12,15,16,17,18,20,21,25,28,29,30],
+      species:[0,1,2,3,4,6,8,9,10,11,12,15,16,17,18,20,21,25,28,29,30,31,32],
       water:["#27929b","#1b828c","#186d7b","#12586b"],sand:"#cbb18a"
     },
     atlantic: {
       label:"北大西洋",subtitle:"岩礁と砂底にすむ仲間を探す海",
-      species:[1,2,3,5,6,7,9,10,12,13,14,19,20,21,25,27,28,29],
+      species:[1,2,3,5,6,7,9,10,12,13,14,19,20,21,25,27,28,29,31,33,34,35],
       water:["#3b768b","#315e79","#274f6a","#1b415e"],sand:"#b3a292"
     }
   };
