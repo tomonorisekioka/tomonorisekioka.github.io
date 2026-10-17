@@ -120,7 +120,7 @@
       events.push([t,1.6,root-12,1,.18]);
     }
     return {id:"atlantic",name:"ビゼー「カルメン：闘牛士の歌」",short:"Toreador Song / Carmen",
-      author:"Georges Bizet",beat:.46,beats:352,events};
+      author:"Georges Bizet",beat:.46,beats:352,chorusAt:toreadorSections[0][1]*.46,events};
   }
   const scores={akkeshi:morning(),temperate:gymnopedie(),atlantic:toreador()};
   for(const score of Object.values(scores)){
