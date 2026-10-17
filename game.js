@@ -17,6 +17,7 @@
     kicker: document.getElementById("overlay-kicker"),
     title: document.getElementById("overlay-title"),
     text: document.getElementById("overlay-text"),
+    hint: document.getElementById("overlay-hint"),
     play: document.getElementById("play-button"),
     restart: document.getElementById("restart-button"),
     time: document.getElementById("time-display"),
@@ -258,6 +259,11 @@
   let nextId = 0, toastUntil = 0;
   let net = null;
   const pointer = { x: 180, y: 106, prevX: 180, prevY: 106, speed: 0, active: false, lastMove: 0, touch: false, keyboard: false };
+  const arrowVectors = {ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]};
+  const heldArrows = new Set();
+  const KEYBOARD_SPEED = 132; // canvas pixels per second, independent of OS key repeat
+  let finishedAt = -Infinity, lastStageTouchAt = -Infinity, restartTouchEligible = false;
+  let latestInputType = "mouse";
   const bubblesSeed = Array.from({length:15},(_,i)=>({x:rand(6,352),y:rand(10,194),r:rand(.5,1.5),v:rand(3,11),phase:rand(0,6)}));
   const flecks = Array.from({length:140},(_,i)=>({x:(i*97+13)%360,y:((i*53+29)%170)+6,c:i%3}));
 
@@ -348,6 +354,7 @@
     ui.text.textContent="場所が変われば、顔ぶれも変わる。ゆっくり近づき、30秒で何タイプ採集できる？";
     ui.play.firstChild.textContent="採集をはじめる ";
     ui.play.querySelector("span").textContent="→";
+    if(ui.hint)ui.hint.textContent="海域を選んで30秒で何タイプ採集できる？";
     updateRegionUI();
     if(keepListening&&audio)audio.start(region);
     updateMusicUI();
@@ -392,7 +399,8 @@
     }
     ui.time.textContent="00:30";ui.caught.textContent="0";ui.species.textContent="0 / "+pool.length;
     updateCrownDisplay();renderCollection();
-    pointer.active=false;pointer.speed=0;
+    pointer.active=false;pointer.speed=0;pointer.keyboard=false;pointer.touch=false;
+    heldArrows.clear();
   }
   function showToast(str) {
     ui.toast.textContent=str;ui.toast.classList.add("visible");toastUntil=performance.now()+1050;
@@ -452,13 +460,17 @@
     showToast("そっと近づいて、ずれた先を狙おう。");
   }
   function finish() {
-    // Music continues past the 30-second timer: the score lasts 2–3 minutes.
-    state="ended"; net=null;ui.overlay.hidden=false;
+    // The separate BGM continues after the 30-second sampling period.
+    state="ended";net=null;pointer.active=false;heldArrows.clear();
+    finishedAt=performance.now();
+    restartTouchEligible=false;
+    ui.overlay.hidden=false;
     ui.kicker.textContent="FIELD REPORT";
     ui.title.textContent=roundFound.size===regionPool().length?"全タイプ採集！":"採集終了！";
     ui.text.textContent="今回 "+caught+"個体・"+roundFound.size+"/"+regionPool().length+"タイプ。図鑑の採集記録と冠は次回も残るよ。";
     ui.play.firstChild.textContent="もう一度採集する ";
     ui.play.querySelector("span").textContent="↻";
+    if(ui.hint)ui.hint.textContent="スマホ：連打を止めて、少し間を置いてから再開してね。";
   }
 
   function canvasCoords(evt) {
@@ -503,6 +515,23 @@
       if(pointer.speed>165)c.shiver=Math.max(c.shiver,.08);
     }
   }
+  // All touch presses inside the stage (including the result overlay) count as
+  // ongoing tapping. Only a fresh press after a quiet gap can restart a round.
+  // This prevents the final rapid sampling taps from activating the new overlay.
+  const stage = document.getElementById("sea-stage");
+  stage.addEventListener("pointerdown",(event)=>{
+    latestInputType=event.pointerType||"mouse";
+    if(event.pointerType!=="touch")return;
+    const now=performance.now();
+    restartTouchEligible=state==="ended" && now-finishedAt>=1100 && now-lastStageTouchAt>=800;
+    lastStageTouchAt=now;
+  },true);
+  stage.addEventListener("pointerup",(event)=>{
+    if(event.pointerType==="touch")lastStageTouchAt=performance.now();
+  },true);
+  stage.addEventListener("pointercancel",(event)=>{
+    if(event.pointerType==="touch")lastStageTouchAt=performance.now();
+  },true);
   canvas.addEventListener("pointerenter",(event)=>{
     if(state==="playing"&&event.pointerType!=="touch") {
       const p=canvasCoords(event);moveCursor(p.x,p.y,performance.now());
@@ -511,12 +540,15 @@
   canvas.addEventListener("pointermove",(event)=>{
     if(state!=="playing")return;
     if(event.pointerType==="touch"&&!(event.buttons&1))return;
-    const p=canvasCoords(event);moveCursor(p.x,p.y,performance.now(),event.pointerType==="touch");
+    const p=canvasCoords(event);
+    heldArrows.clear();pointer.keyboard=false;
+    moveCursor(p.x,p.y,performance.now(),event.pointerType==="touch");
   });
   canvas.addEventListener("pointerleave",()=>{if(!pointer.touch)pointer.active=false;});
   canvas.addEventListener("pointerdown",(event)=>{
     if(state!=="playing")return;
     canvas.focus({preventScroll:true});
+    heldArrows.clear();pointer.keyboard=false;
     if(event.pointerType==="touch"){
       event.preventDefault();
       try{canvas.setPointerCapture(event.pointerId);}catch(_){}
@@ -538,21 +570,40 @@
   canvas.addEventListener("pointercancel",()=>{pointer.active=false;});
   canvas.addEventListener("keydown",(event)=>{
     if(state!=="playing")return;
-    const vector={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]};
-    if(vector[event.key]) {
+    const v=arrowVectors[event.key];
+    if(v){
       event.preventDefault();
-      const v=vector[event.key];const now=performance.now();
-      moveCursor(clamp(pointer.x+v[0]*4,0,W),clamp(pointer.y+v[1]*4,0,H),now);
+      if(heldArrows.has(event.key))return; // browser auto-repeat no longer drives speed
+      heldArrows.add(event.key);
+      const now=performance.now();
+      if(!pointer.active)moveCursor(pointer.x,pointer.y,now);
       pointer.keyboard=true;
-    } else if(event.code==="Space"||event.key==="Enter") {
-      event.preventDefault();pointer.keyboard=true;attempt();
+      // Move instantly on the first press, then smoothly every animation frame.
+      moveCursor(clamp(pointer.x+v[0]*3,0,W),clamp(pointer.y+v[1]*3,0,H),now+16);
+    }else if(event.code==="Space"||event.key==="Enter"){
+      event.preventDefault();
+      if(event.repeat)return;
+      pointer.keyboard=true;attempt();
     }
   });
+  // Release must be handled on window: the key can come up after focus changes.
+  window.addEventListener("keyup",event=>{if(arrowVectors[event.key])heldArrows.delete(event.key);});
+  window.addEventListener("blur",()=>{heldArrows.clear();});
+  function driveKeyboard(dt,now){
+    if(state!=="playing"||!heldArrows.size)return;
+    let dx=0,dy=0;
+    for(const key of heldArrows){dx+=arrowVectors[key][0];dy+=arrowVectors[key][1];}
+    const length2=Math.hypot(dx,dy);
+    if(!length2)return;
+    const step=KEYBOARD_SPEED*dt/length2;
+    pointer.keyboard=true;
+    moveCursor(clamp(pointer.x+dx*step,0,W),clamp(pointer.y+dy*step,0,H),now);
+  }
 
   function attempt() {
     if(state!=="playing"||net)return;
     const x=pointer.x,y=pointer.y,shotAt=performance.now();
-    const tooFast=pointer.speed>165;
+    const tooFast=!pointer.keyboard&&pointer.speed>165;
     let best=null,bestD=Infinity;
     for(const c of creatures) {
       if(c.hidden)continue;
@@ -820,7 +871,7 @@
   function frame(now) {
     const dt=Math.min((now-(lastFrame||now))/1000,.035);
     lastFrame=now;
-    if(state==="playing")update(dt,now);
+    if(state==="playing"){driveKeyboard(dt,now);update(dt,now);}
     else gameTime+=dt*.55;
     render(now);
     if(now-lastMusicRender>280){updateMusicUI();lastMusicRender=now;}
@@ -929,9 +980,21 @@
     });
     update();
   }
-  ui.play.addEventListener("click",start);
+  ui.play.addEventListener("click",event=>{
+    // Keyboard activation is always deliberate. Touch activation after a round
+    // requires a pause; rapid taps through the game-over transition are ignored.
+    const touchClick=event.pointerType==="touch" ||
+      (!event.pointerType&&latestInputType==="touch"&&event.detail!==0);
+    if(state==="ended"&&touchClick&&!restartTouchEligible){
+      if(ui.hint)ui.hint.textContent="連打による誤操作を防いでいます。少し間を置いてタップしてね。";
+      return;
+    }
+    restartTouchEligible=false;
+    start();
+  });
   ui.restart.addEventListener("click",start);
   document.addEventListener("visibilitychange",()=>{
+    if(document.hidden)heldArrows.clear();
     if(document.hidden&&state==="playing")pausedAt=performance.now();
     if(!document.hidden&&pausedAt&&state==="playing"){
       endAt+=performance.now()-pausedAt;pausedAt=0;lastFrame=performance.now();
