@@ -251,6 +251,8 @@
   });
 
   let state = "ready", caught = 0, discovered = new Set(), roundFound = new Set(), records = {}, allRecords = {}, region = "akkeshi";
+  const audio=window.AmphipodMusic || null;
+  let musicEnabled=true,musicVolume=26;
   let creatures = [], shots = [], particles = [], bubbles = [];
   let gameTime = 0, endAt = 0, lastFrame = 0, pausedAt = 0;
   let nextId = 0, toastUntil = 0;
@@ -335,6 +337,7 @@
   function regionPool(){return regions[region].species;}
   function switchRegion(id) {
     if(!Object.prototype.hasOwnProperty.call(regions,id)||id===region)return;
+    if(audio)audio.stop();
     region=id;
     try{localStorage.setItem(REGION_KEY,region);}catch(_){}
     activateRegionRecords();reset();
@@ -432,10 +435,12 @@
   function start() {
     reset();
     state="playing";endAt=performance.now()+RUN_SECONDS*1000;
+    if(musicEnabled&&audio)audio.start();
     ui.overlay.hidden=true;canvas.focus({preventScroll:true});
     showToast("そっと近づいて、ずれた先を狙おう。");
   }
   function finish() {
+    if(audio)audio.stop();
     state="ended"; net=null;ui.overlay.hidden=false;
     ui.kicker.textContent="FIELD REPORT";
     ui.title.textContent=roundFound.size===regionPool().length?"全タイプ採集！":"採集終了！";
@@ -836,16 +841,50 @@
     refresh();
   }
 
+  function setupMusic(){
+    const toggle=document.getElementById("music-toggle");
+    const slider=document.getElementById("music-volume");
+    if(!toggle||!slider)return;
+    try{
+      musicEnabled=localStorage.getItem("ts-amphipod-music-on-v1")!=="false";
+      const saved=Number(localStorage.getItem("ts-amphipod-music-volume-v1"));
+      if(Number.isFinite(saved)&&saved>=0&&saved<=100&&localStorage.getItem("ts-amphipod-music-volume-v1")!==null)musicVolume=saved;
+    }catch(_){}
+    if(!audio||!audio.supported){musicEnabled=false;toggle.disabled=true;toggle.textContent="音声非対応";slider.disabled=true;return;}
+    const update=()=>{
+      toggle.textContent=musicEnabled?"♫ ON":"♫ OFF";
+      toggle.setAttribute("aria-pressed",String(musicEnabled));
+      toggle.setAttribute("aria-label",musicEnabled?"BGMをミュートする":"BGMをオンにする");
+      slider.value=String(musicVolume);
+      audio.setVolume(musicVolume/100);
+    };
+    toggle.addEventListener("click",()=>{
+      musicEnabled=!musicEnabled;
+      try{localStorage.setItem("ts-amphipod-music-on-v1",String(musicEnabled));}catch(_){}
+      if(musicEnabled&&state==="playing")audio.start();
+      else if(!musicEnabled)audio.stop();
+      update();
+    });
+    slider.addEventListener("input",()=>{
+      musicVolume=Number(slider.value);
+      audio.setVolume(musicVolume/100);
+    });
+    slider.addEventListener("change",()=>{
+      try{localStorage.setItem("ts-amphipod-music-volume-v1",String(musicVolume));}catch(_){}
+    });
+    update();
+  }
   ui.play.addEventListener("click",start);
   ui.restart.addEventListener("click",start);
   document.addEventListener("visibilitychange",()=>{
-    if(document.hidden&&state==="playing")pausedAt=performance.now();
+    if(document.hidden&&state==="playing"){pausedAt=performance.now();if(audio)audio.stop();}
     if(!document.hidden&&pausedAt&&state==="playing"){
       endAt+=performance.now()-pausedAt;pausedAt=0;lastFrame=performance.now();
+      if(audio&&musicEnabled)audio.start();
     }
   });
   document.querySelectorAll("[data-region]").forEach(button=>{
     button.addEventListener("click",()=>switchRegion(button.dataset.region));
   });
-  setupTheme();loadRecords();reset();updateRegionUI();requestAnimationFrame(frame);
+  setupTheme();setupMusic();loadRecords();reset();updateRegionUI();requestAnimationFrame(frame);
 })();
