@@ -364,7 +364,7 @@
     if(label)label.textContent="♪ 8BIT BGM · "+(track?track.title:"BGM");
     const credit=document.getElementById("music-credit");
     if(credit&&track)credit.textContent="♪ "+track.composer+" — "+track.piece+
-      "。原曲の譜面・採譜データに基づく約3分の8bit演奏（録音素材不使用）。採集終了後も続き、最後まで演奏します。";
+      "。音符データをWeb Audioで8bit化（録音素材不使用）。採集終了後も続き、最後まで演奏します。";
     const chorus=document.getElementById("music-refrain");
     if(chorus)chorus.hidden=region!=="atlantic";
   }
