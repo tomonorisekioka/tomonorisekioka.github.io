@@ -192,6 +192,24 @@
       b(10,10,2,5,main);b(8,14,2,3,shade);b(6,16,3,2,hi);
       b(17,10,2,5,main);b(19,14,2,3,main);b(21,16,3,1,shade);
       b(21,10,2,4,main);b(23,13,3,2,hi);b(12,8,1,1,ink);
+    }else if(k.shape==="lysianassoid"){
+      // Deep-bodied lysianassoid outline: bulbous thorax, broadened coxal plates,
+      // forward-sweeping antennae, large head and folded posterior appendages.
+      const spans=[[3,11,3],[7,8,7],[11,6,10],[15,6,12],[19,8,10],[23,10,7]];
+      spans.forEach(([x,y,h],i)=>{
+        b(x,y,5,h,ink);b(x+1,y,4,h-1,main);
+        b(x+1,y,3,2,hi);
+        if(i>1&&i<5)b(x+1,y+7,4,4,shade);
+        if(k.pattern%2===0&&i%2===0)b(x+2,y+3,2,2,hi);
+        if(k.pattern%2===1&&i%2===1)b(x+2,y+3,2,2,shade);
+      });
+      b(23,9,6,7,ink);b(24,9,4,6,main);b(25,10,3,2,hi);
+      b(26,12,1,1,ink); // eye
+      b(28,8,2,2,shade);b(29,6,1,3,hi);b(30,5,1,2,hi);
+      b(26,14,3,1,shade);b(28,15,2,2,shade);
+      b(12,17,2,4,shade);b(10,20,4,1,shade);
+      b(17,18,2,3,shade);b(16,20,5,1,shade);
+      b(6,14,2,3,shade);b(3,16,3,1,shade);
     }else{
       const shape=k.shape, hump=shape==="hump",tube=shape==="tube",sand=shape==="sand";
       const spans=hump?[[5,10,4],[8,7,8],[13,5,11],[18,7,9],[22,10,6]]
@@ -382,6 +400,12 @@
       const where=document.createElement("p");
       where.textContent=found?(k.name+" / "+k.where+(k.nickname?" · ゲーム内呼称":"")):"未採集 · "+k.where;
       info.append(name,where);
+      if(found&&k.lysianassoid){
+        const group=document.createElement("p");
+        group.className="specimen-group";
+        group.textContent="LYSIANASSOIDEA · フトヒゲソコエビ上科";
+        info.appendChild(group);
+      }
       if(found&&rec){
         const sizes=document.createElement("p");sizes.className="specimen-sizes";
         sizes.textContent="採集 "+rec.count+"｜最大 "+rec.big.toFixed(2)+"× / 最小 "+rec.small.toFixed(2)+"×";
