@@ -22,7 +22,7 @@
     const gym=region==="temperate",march=region==="atlantic";
     oscillator.type=voice===1?"triangle":gym&&voice===0?"sine":voice===3?"triangle":"square";
     oscillator.frequency.setValueAtTime(pitchHz(pitch),at);
-    const peak=Math.max(.0001,(voice===0?(gym?.077:.087):voice===1?.07:voice===3?.023:march?.019:.016)*vel);
+    const peak=Math.max(.0001,(voice===0?(gym?.077:.087):voice===1?.07:voice===3?.023:gym?.026:march?.019:.016)*vel);
     const span=Math.max(.055,Math.min(8,duration*secPerBeat*.93));
     const attack=gym?.023:.009,release=Math.min(gym?.24:.12,span*.33);
     const end=at+span;
