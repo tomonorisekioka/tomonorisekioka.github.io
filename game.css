@@ -54,3 +54,32 @@
 @media(max-width:900px){.game-stat{min-width:115px;padding:15px 19px}.game-stamp{display:none}.collection-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){.game-main{padding-top:35px;padding-bottom:55px}.game-heading{margin-bottom:22px}.game-heading h1{font-size:31px}.game-subtitle{font-size:13px}.game-bar{min-height:61px;flex-wrap:wrap}.game-stat{min-width:0;flex:1 1 30%;padding:9px 12px}.game-stat strong{font-size:20px}.game-stat-action{flex:1 0 100%;padding:7px 10px;justify-content:flex-end;border-top:1px solid var(--line)}.game-small-button{font-size:11px;padding:6px 10px}.game-bottom{flex-direction:column;gap:3px;font-size:10px;padding:10px 13px}.overlay-card{padding:16px 15px 14px}.overlay-card h2{font-size:19px}.overlay-card p{font-size:11px;margin-bottom:11px}.game-start{font-size:12px;padding:8px 11px}.overlay-card .overlay-small{font-size:9px}.game-toast{bottom:5%;font-size:11px}.game-guide{grid-template-columns:1fr;gap:28px;padding:48px 0 43px}.collection{padding-top:40px}.collection-heading{align-items:start;flex-direction:column;gap:9px}.collection-grid{grid-template-columns:1fr 1fr;gap:8px}.specimen{flex-direction:column;align-items:flex-start;gap:7px;min-height:114px;padding:10px}.specimen-art{width:42px;height:33px}.specimen-art canvas{width:39px;height:29px}.specimen-copy strong{font-size:11px}.specimen-copy p{font-size:10px}}
 @media(prefers-reduced-motion:reduce){.specimen,.game-toast{transition:none}}
+
+/* Crown sizes and collecting notebook */
+.crown-legend{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:-4px 0 20px}
+.crown-badge{display:inline-flex;gap:5px;align-items:center;justify-content:center;border:1px solid transparent;border-radius:3px;padding:3px 7px;font-size:10px;line-height:1.5;letter-spacing:.005em;font-weight:750;white-space:nowrap}
+.crown-badge.gold{color:#493000;background:#ffe5a0;border-color:#d09c36}
+.crown-badge.silver{color:#37465b;background:#e0e7f0;border-color:#9bacbf}
+.crown-badge.mini{color:#513606;background:#fcebc6;border-color:#d8b966}
+.crown-badge small{font-size:10px;font-weight:530;margin-left:2px}
+.crown-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.specimen-sizes{font-size:10px!important;letter-spacing:-.02em;line-height:1.5!important;color:var(--ink)!important;font-variant-numeric:tabular-nums}
+.collection-grid .specimen{align-items:flex-start;min-height:108px}
+.collection-grid .specimen-art{margin-top:3px}
+.collection-grid .specimen-copy{flex:1}
+.collection-grid .specimen-copy strong{font-size:12px}
+.collection-grid .specimen-copy p{line-height:1.55}
+.collection-grid .specimen.found:has(.crown-badge.gold){border-color:#d09c36}
+.collection-grid .specimen.found:has(.crown-badge.silver){border-color:#9bacbf}
+@media(max-width:640px){
+  .game-bar .game-stat{flex:1 1 22%;padding:8px 7px}
+  .game-bar .game-stat span{font-size:9px}
+  .game-bar .game-stat strong{font-size:17px}
+  .game-bar .game-stat-action{flex:1 0 100%;justify-content:flex-end;padding:6px 10px}
+  .crown-legend{gap:5px}
+  .crown-badge{padding:2px 5px;font-size:9px}
+  .crown-badge small{font-size:8px}
+  .collection-grid .specimen{min-height:132px;padding:9px}
+  .collection-grid .specimen-copy strong{font-size:11px}
+  .specimen-sizes{font-size:9px!important}
+}
