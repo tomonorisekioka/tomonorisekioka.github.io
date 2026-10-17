@@ -11,7 +11,7 @@
   const scores=window.AmphipodScores||{};
   const hasAudio=!!NativeContext && Object.keys(scores).length===3;
   const tracks=Object.fromEntries(Object.entries(scores).map(([id,s])=>
-    [id,{title:s.name,composer:s.author,piece:s.short,duration:s.seconds}]));
+    [id,{title:s.name,composer:s.author,piece:s.short,duration:s.seconds,chorusAt:s.chorusAt||null}]));
   let context=null,bus=null,timer=null,playing=false,volume=.26,
       region="akkeshi",eventIndex=0,startTime=0;
   const pitchHz=p=>440*Math.pow(2,(p-69)/12);
