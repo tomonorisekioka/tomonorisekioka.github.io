@@ -200,11 +200,26 @@
   canvas.addEventListener("pointerleave",()=>{if(!pointer.touch)pointer.active=false;});
   canvas.addEventListener("pointerdown",(event)=>{
     if(state!=="playing")return;
-    if(event.pointerType==="touch"){event.preventDefault();const p=canvasCoords(event);if(!pointer.active){moveCursor(p.x,p.y,performance.now(),true)}else{moveCursor(p.x,p.y,performance.now(),true)}}
     canvas.focus({preventScroll:true});
+    if(event.pointerType==="touch"){
+      event.preventDefault();
+      try{canvas.setPointerCapture(event.pointerId);}catch(_){}
+      const p=canvasCoords(event);
+      moveCursor(p.x,p.y,performance.now(),true);
+      return; // On touch, a slow drag aims the net; releasing actually casts it.
+    }
     attempt();
   });
-  canvas.addEventListener("pointerup",(event)=>{if(event.pointerType==="touch")pointer.active=false});
+  canvas.addEventListener("pointerup",(event)=>{
+    if(event.pointerType==="touch"){
+      if(state==="playing"){
+        const p=canvasCoords(event);moveCursor(p.x,p.y,performance.now(),true);
+        attempt();
+      }
+      pointer.active=false;
+    }
+  });
+  canvas.addEventListener("pointercancel",()=>{pointer.active=false;});
   canvas.addEventListener("keydown",(event)=>{
     if(state!=="playing")return;
     const vector={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]};
