@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#101e28">
+  <meta name="description" content="海藻、砂底、岩礁、ブイの周りに隠れるドット絵のヨコエビを採集するミニゲーム。クリックするとブルブル震えてすり抜ける！">
+  <link rel="canonical" href="https://tomonorisekioka.github.io/game.html">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <title>ヨコエビ採集日和 | Tomonori Sekioka</title>
+  <script>
+    (function () {
+      try {
+        var theme = localStorage.getItem('ts-theme');
+        if (theme === 'light' || theme === 'dark') document.documentElement.setAttribute('data-theme', theme);
+      } catch (_) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="style.css?v=20261017-dark1">
+  <link rel="stylesheet" href="game.css?v=20261017a">
+  <script defer src="game.js?v=20261017a"></script>
+</head>
+<body>
+  <a class="skip-link" href="#play">ゲームへスキップ</a>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="wordmark" href="index.html" aria-label="研究者サイトに戻る">TS<span class="dot">.</span></a>
+      <nav aria-label="ゲームページの案内">
+        <a href="index.html">← Research website</a>
+        <a href="#guide">遊びかた</a>
+        <a href="#collection">採集記録</a>
+      </nav>
+      <details class="theme-menu" id="theme-menu">
+        <summary aria-label="表示テーマを選択" title="表示テーマを選択"><span class="theme-glyph" aria-hidden="true">◐</span><span id="theme-current">Auto</span><span class="theme-chevron" aria-hidden="true">⌄</span></summary>
+        <div class="theme-options" role="group" aria-label="表示テーマ">
+          <button type="button" data-theme-option="auto" aria-pressed="true">Auto · OSに合わせる</button>
+          <button type="button" data-theme-option="light" aria-pressed="false">☀ Light</button>
+          <button type="button" data-theme-option="dark" aria-pressed="false">☾ Dark</button>
+        </div>
+      </details>
+    </div>
+  </header>
+  <main class="wrap game-main" id="play">
+    <div class="game-heading">
+      <div>
+        <p class="eyebrow">A LITTLE FIELDWORK, UNDERWATER</p>
+        <h1>ヨコエビ採集日和 <span>AMPHIPOD HUNT</span></h1>
+        <p class="game-subtitle">海藻のすきま、砂の上、岩のかげ、ブイのロープ。<br>「つかまえた！」と思った次の瞬間、するり。</p>
+      </div>
+      <p class="game-stamp">PIXEL FIELD NOTE <span>no. 001</span></p>
+    </div>
+    <section class="game-station" aria-label="ヨコエビ採集ゲーム">
+      <div class="game-bar">
+        <div class="game-stat"><span>TIME</span><strong id="time-display">01:30</strong></div>
+        <div class="game-stat"><span>CAUGHT</span><strong id="catch-display">0</strong></div>
+        <div class="game-stat"><span>SPECIES</span><strong id="species-display">0 / 6</strong></div>
+        <div class="game-stat game-stat-action"><button class="game-small-button" type="button" id="restart-button">↻ やり直す</button></div>
+      </div>
+      <div class="sea-stage" id="sea-stage">
+        <canvas id="sea" width="720" height="420" tabindex="0" aria-label="海中のドット絵。海の中のヨコエビをクリック、または矢印キーで狙いを動かしてスペースキーで採集します。">海の中にいるヨコエビをクリックして採集するゲームです。</canvas>
+        <div class="game-overlay" id="game-overlay">
+          <div class="overlay-card">
+            <span class="overlay-eyebrow" id="overlay-kicker">READY TO DIVE?</span>
+            <h2 id="overlay-title">ヨコエビをつかまえよう。</h2>
+            <p id="overlay-text">ヨコエビを見つけたらクリックして網を振る。<br>反射的に身をよじって、網をすり抜けてしまうことも。</p>
+            <button type="button" class="game-start" id="play-button">採集をはじめる <span aria-hidden="true">→</span></button>
+            <p class="overlay-small">90秒で何種類つかまえられる？</p>
+          </div>
+        </div>
+        <div id="game-toast" class="game-toast" role="status" aria-live="polite"></div>
+      </div>
+      <div class="game-bottom"><span><span class="sea-indicator" aria-hidden="true"></span> 海中をよく見ると、あちこちにヨコエビが。</span><span>クリック・タップで採集 <span aria-hidden="true">/</span> 矢印キー＋SpaceでもOK</span></div>
+    </section>
+
+    <section class="game-guide" id="guide">
+      <div>
+        <p class="section-number">FIELD GUIDE / 01</p>
+        <h2>網のすきまを、するり。</h2>
+        <p>彼らは小さくて、思いのほかすばしっこい。クリックした瞬間にブルブルっと体を震わせ、砂や海藻の陰に逃げ込む。何度も挑戦して、いろんな生息場所のヨコエビを採集してみよう。</p>
+      </div>
+      <div class="guide-tips">
+        <p><strong>01</strong> 海中にいるヨコエビを探す</p>
+        <p><strong>02</strong> 狙いを定めてクリック / タップ</p>
+        <p><strong>03</strong> 逃げられても、もう一度！</p>
+      </div>
+    </section>
+    <section class="collection" id="collection">
+      <div class="collection-heading">
+        <div><p class="section-number">FIELD GUIDE / 02</p><h2>採集ノート <span>COLLECTION</span></h2></div>
+        <p id="collection-progress">まだ採集した個体はいません。</p>
+      </div>
+      <div class="collection-grid" id="collection-grid" aria-label="採集したヨコエビの一覧"></div>
+      <p class="collection-note">このゲームは海での採集体験に着想を得たフィクションです。生き物の形や生息場所はドット絵向けにデフォルメしています。</p>
+    </section>
+  </main>
+  <footer class="footer"><div class="wrap footer-inner"><span>© 2026 Tomonori Sekioka · A tiny interactive field note</span><a href="index.html">研究者サイトに戻る ↗</a></div></footer>
+</body>
+</html>
