@@ -356,6 +356,12 @@
     document.querySelectorAll("[data-region]").forEach(button=>{
       button.setAttribute("aria-pressed",String(button.dataset.region===region));
     });
+    const track=audio&&audio.tracks&&audio.tracks[region];
+    const label=document.getElementById("music-label");
+    if(label)label.textContent="♪ 8BIT BGM · "+(track?track.title:"BGM");
+    const credit=document.getElementById("music-credit");
+    if(credit&&track)credit.textContent="♪ "+track.composer+" — "+track.piece+
+      "。パブリックドメイン原曲の旋律をWeb Audioで短い8bitループにアレンジ（録音素材不使用）。採集開始時に再生し、終了・海域変更で停止します。";
   }
   function crownCounts() {
     let largeGold=0,largeSilver=0,miniGold=0;
@@ -435,7 +441,7 @@
   function start() {
     reset();
     state="playing";endAt=performance.now()+RUN_SECONDS*1000;
-    if(musicEnabled&&audio)audio.start();
+    if(musicEnabled&&audio)audio.start(region);
     ui.overlay.hidden=true;canvas.focus({preventScroll:true});
     showToast("そっと近づいて、ずれた先を狙おう。");
   }
@@ -861,7 +867,7 @@
     toggle.addEventListener("click",()=>{
       musicEnabled=!musicEnabled;
       try{localStorage.setItem("ts-amphipod-music-on-v1",String(musicEnabled));}catch(_){}
-      if(musicEnabled&&state==="playing")audio.start();
+      if(musicEnabled&&state==="playing")audio.start(region);
       else if(!musicEnabled)audio.stop();
       update();
     });
@@ -880,7 +886,7 @@
     if(document.hidden&&state==="playing"){pausedAt=performance.now();if(audio)audio.stop();}
     if(!document.hidden&&pausedAt&&state==="playing"){
       endAt+=performance.now()-pausedAt;pausedAt=0;lastFrame=performance.now();
-      if(audio&&musicEnabled)audio.start();
+      if(audio&&musicEnabled)audio.start(region);
     }
   });
   document.querySelectorAll("[data-region]").forEach(button=>{
