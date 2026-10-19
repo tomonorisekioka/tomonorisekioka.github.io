@@ -71,3 +71,10 @@
 .game-feature-copy>span:last-child{font-size:12px;line-height:1.65;color:var(--muted)}
 .game-feature-link{flex:none;font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--accent)}
 @media(max-width:640px){.game-feature{gap:12px;padding:14px}.game-feature-icon{width:49px;height:53px;font-size:11px}.game-feature-icon span{font-size:18px}.game-feature-copy strong{font-size:15px}.game-feature-label{font-size:9px}.game-feature-link{font-size:10px}}
+
+/* Optional OFUSE tip jar, kept understated within the footer. */
+.footer-support{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 15px;padding-top:24px;font-size:13px;line-height:1.8}
+.footer-support a{font-weight:700;text-decoration:underline;text-underline-offset:4px}
+.footer-support a:hover{color:#fff}
+.footer-support>span{opacity:.88}
+.footer-support+.footer-inner{min-height:78px}
