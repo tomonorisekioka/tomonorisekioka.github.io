@@ -451,6 +451,7 @@
     ui.progress.textContent=discovered.size+" / "+regionPool().length+"タイプ採集済み · 大型金 "+c.largeGold+" / 大型銀 "+c.largeSilver+" / ミニ金 "+c.miniGold;
   }
   function start() {
+    if(audio?.unlock)audio.unlock(); // gesture-unlock SFX even with BGM disabled
     reset();
     state="playing";endAt=performance.now()+RUN_SECONDS*1000;
     if(musicEnabled&&audio&&!audio.isPlaying())audio.start(region);
@@ -638,6 +639,7 @@
       const reach=(n.touch?10.5:8)+5*c.scale;
       if(length(dx,dy)<=reach){
         caught++;discovered.add(c.kind);roundFound.add(c.kind);c.hidden=true;
+        if(audio?.playCatch)audio.playCatch(); // true catch only; missed nets stay silent
         const previous=records[c.kind]||{count:0,big:0,small:0,large:"",mini:false};
         const badge=crownFor(c.ratio);
         previous.count++;
