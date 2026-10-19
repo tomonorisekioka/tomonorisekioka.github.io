@@ -853,31 +853,39 @@
   }
   // North Pacific kelps have a single undivided blade: unlike our older
   // placeholder, leaves do not branch from multiple nodes along the stalk.
-  function hokkaidoKombu(x,base,height,t,wide){
-    const sway=Math.sin(t*.4+x*.037)*2;
-    const rootX=Math.round(x+sway);
-    const stipeH=wide?10:7;
-    // Thick, spreading attachment, rooted on rock.
-    rect(rootX-5,base-1,11,3,"#424940");
-    rect(rootX-5,base-4,2,4,"#47503e");
-    rect(rootX+4,base-4,2,4,"#47503e");
-    for(let y=0;y<stipeH;y+=3){
-      rect(rootX+Math.round(Math.sin(t*.36+y*.12)*1.5),base-y,3,4,"#5e6542");
-    }
+  // Undivided laminarian blades, drawn as ribbons leaning with the current.
+  // Onikombu has broad ruffled margins; nagakombu is narrow and nearly flat.
+  function hokkaidoKombu(x,base,height,t,wide,dir=1){
+    const rootX=Math.round(x+Math.sin(t*.34+x*.03));
+    const stipeH=wide?9:7;
+    rect(rootX-5,base-2,11,3,"#41483d");
+    rect(rootX-4,base-5,2,4,"#505943");
+    rect(rootX+4,base-5,2,4,"#505943");
+    for(let y=0;y<stipeH;y+=3)rect(rootX,base-y,3,4,"#5b6546");
     const bladeH=height-stipeH;
-    // Wide, leathery onikombu / long, narrower nagakombu.
     for(let y=0;y<bladeH;y+=3){
       const p=y/bladeH;
-      const body=Math.min(1,(1-p)/.18);
-      const fullness=Math.min(1,(p+.05)/.20)*body;
-      const width=Math.max(3,Math.round((wide?8:5)+(wide?14:6)*fullness));
-      const current=Math.round(Math.sin(t*.44+y*.055+x*.04)*(1+p*2));
-      const xx=rootX-Math.floor(width/2)+current;
+      // A curve, not a vertical stalk: the upper half trails sideways.
+      const lean=(wide?34:40)*dir*Math.pow(p,1.4);
+      const sway=Math.sin(t*.46+y*.055+x*.08)*(1+3*p);
+      const center=rootX+lean+sway;
+      // Wide, conspicuously undulating onikombu versus long flat nagakombu.
+      const taper=Math.min(1,(p+.04)*8)*Math.min(1,(1-p)*8);
+      const width=(wide?19:7)*taper+3;
+      const ripple=wide?3.4:0.3;
+      const left=Math.round(center-width/2+
+        Math.sin(y*.17+t*.48+x*.03)*ripple);
+      const right=Math.round(center+width/2+
+        Math.cos(y*.17+t*.5+x*.03)*ripple);
       const yy=base-stipeH-y;
-      rect(xx,yy,width,4,wide?"#777a43":"#8b8050");
-      rect(xx+1,yy,Math.max(2,Math.floor(width*.28)),3,wide?"#8d8d52":"#a89b62");
-      // A subdued central band, uninterrupted along the leaf.
-      rect(xx+Math.floor(width/2),yy,2,4,wide?"#5d6941":"#6d7144");
+      const w=Math.max(3,right-left);
+      rect(left,yy,w,4,wide?"#737948":"#898454");
+      // Dull longitudinal mid-band; lighter ruffled edges only on onikombu.
+      rect(left+Math.floor(w/2),yy,1,4,wide?"#596b40":"#686e49");
+      if(wide&&y%9<3){
+        rect(left,yy,2,3,"#adb075");
+        rect(left+w-2,yy,2,3,"#a1a66b");
+      }
     }
   }
   function hokkaidoSargassum(x,base,height,t){
@@ -938,10 +946,10 @@
       seaRock(x,y,w,h,i%2?"#435768":"#334d60","#617584"));
     // The wide, single-bladed onikombu contrasts with the long,
     // narrower ribbon leaves of nagakombu.
-    hokkaidoKombu(121,177,69,t,true);
-    hokkaidoKombu(148,175,78,t,true);
-    hokkaidoKombu(173,177,96,t,false);
-    hokkaidoKombu(198,176,87,t,false);
+    hokkaidoKombu(121,177,69,t,true,1);
+    hokkaidoKombu(148,175,78,t,true,-1);
+    hokkaidoKombu(173,177,96,t,false,1);
+    hokkaidoKombu(198,176,87,t,false,1);
     // Small brown branching algae with blades and floating vesicles.
     hokkaidoSargassum(237,171,43,t);
     hokkaidoSargassum(263,174,54,t);
