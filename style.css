@@ -85,3 +85,5 @@
 .site-header .nav-icon{display:block;width:16px;height:16px;flex:none}
 @media(max-width:820px){.site-header .nav nav{gap:9px 12px}}
 @media(max-width:640px){.site-header .nav nav{gap:8px 10px}.site-header .nav-icon{width:14px;height:14px}}
+/* Reuse the same pictograms for section headings; inherit dark/light colors. */
+.heading-icon{width:1em;height:1em;display:inline-block;vertical-align:-.11em;margin-right:.29em;color:var(--accent);flex:none}
