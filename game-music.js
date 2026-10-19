@@ -75,6 +75,39 @@
       return true;
     }catch(_){stop();return false;}
   }
+  // Unblock Web Audio on the user's start gesture even when BGM is turned off.
+  // Catch SFX uses its own envelope, independent of BGM gain and playback.
+  function unlock(){
+    if(!NativeContext)return false;
+    try{
+      context ||= new NativeContext();
+      if(context.state!=="running")context.resume().catch(()=>{});
+      return true;
+    }catch(_){return false;}
+  }
+  function playCatch(){
+    if(!unlock())return;
+    // Two short, gentle arcade chimes. No recording or external sound asset.
+    try{
+      const at=context.currentTime+.006;
+      for(const [offset,hz,span,peak] of [
+        [0,784,.085,.055],
+        [.07,1046.5,.15,.064]
+      ]){
+        const osc=context.createOscillator();
+        const env=context.createGain();
+        const startAt=at+offset;
+        osc.type="triangle";
+        osc.frequency.setValueAtTime(hz,startAt);
+        env.gain.setValueAtTime(.0001,startAt);
+        env.gain.linearRampToValueAtTime(peak,startAt+.006);
+        env.gain.exponentialRampToValueAtTime(.0001,startAt+span);
+        osc.connect(env);env.connect(context.destination);
+        osc.start(startAt);osc.stop(startAt+span+.015);
+        osc.onended=()=>{try{osc.disconnect();env.disconnect();}catch(_){}};
+      }
+    }catch(_){/* Audio is optional; never break the catch flow. */}
+  }
   function stop(){
     playing=false;
     if(timer!==null){window.clearInterval(timer);timer=null;}
@@ -88,7 +121,7 @@
     }
   }
   window.AmphipodMusic={
-    start,stop,setVolume,supported:hasAudio,isPlaying:()=>playing,
+    start,stop,setVolume,unlock,playCatch,supported:hasAudio,isPlaying:()=>playing,
     currentTrack:()=>region,tracks,position,seconds
   };
 })();
