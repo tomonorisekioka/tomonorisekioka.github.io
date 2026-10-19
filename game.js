@@ -140,7 +140,7 @@
   // Every genus is accessible somewhere, while Bathyporeia belongs only to the Atlantic field.
   const regions = {
     akkeshi: {
-      label:"厚岸・北日本",subtitle:"亜寒帯と温帯の境界をイメージした海",
+      label:"厚岸・北日本",subtitle:"道東のアマモ場とコンブ・ホンダワラ類の岩礁をイメージした海",
       species:[0,1,2,3,4,5,7,9,10,11,13,14,17,19,20,21,22,23,24,25,26,28,29,30,31,32,33,34,35],
       water:["#174b69","#10526a","#0c435f","#0c3953"], sand:"#bdab8c"
     },
@@ -851,21 +851,105 @@
       rect(309+shift,y,6+i%3,2,region==="atlantic"?"#77917b":"#4b9c85");
     }
   }
-  function northernBottom(t){
-    // Estuarine seagrass, cool-water kelp and low rounded cobble beds.
-    for(let i=0;i<15;i++){
-      const x=10+i*21,height=17+(i*19)%27;
-      longSeagrass(x,175,height,t,"#245f68","#31767a");
+  // North Pacific kelps have a single undivided blade: unlike our older
+  // placeholder, leaves do not branch from multiple nodes along the stalk.
+  function hokkaidoKombu(x,base,height,t,wide){
+    const sway=Math.sin(t*.4+x*.037)*2;
+    const rootX=Math.round(x+sway);
+    const stipeH=wide?10:7;
+    // Thick, spreading attachment, rooted on rock.
+    rect(rootX-5,base-1,11,3,"#424940");
+    rect(rootX-5,base-4,2,4,"#47503e");
+    rect(rootX+4,base-4,2,4,"#47503e");
+    for(let y=0;y<stipeH;y+=3){
+      rect(rootX+Math.round(Math.sin(t*.36+y*.12)*1.5),base-y,3,4,"#5e6542");
     }
-    [[0,168,39,24],[22,160,32,19],[202,165,32,19],
-      [223,158,31,20],[251,169,30,15]].forEach(([x,y,w,h],i)=>
+    const bladeH=height-stipeH;
+    // Wide, leathery onikombu / long, narrower nagakombu.
+    for(let y=0;y<bladeH;y+=3){
+      const p=y/bladeH;
+      const body=Math.min(1,(1-p)/.18);
+      const fullness=Math.min(1,(p+.05)/.20)*body;
+      const width=Math.max(3,Math.round((wide?8:5)+(wide?14:6)*fullness));
+      const current=Math.round(Math.sin(t*.44+y*.055+x*.04)*(1+p*2));
+      const xx=rootX-Math.floor(width/2)+current;
+      const yy=base-stipeH-y;
+      rect(xx,yy,width,4,wide?"#777a43":"#8b8050");
+      rect(xx+1,yy,Math.max(2,Math.floor(width*.28)),3,wide?"#8d8d52":"#a89b62");
+      // A subdued central band, uninterrupted along the leaf.
+      rect(xx+Math.floor(width/2),yy,2,4,wide?"#5d6941":"#6d7144");
+    }
+  }
+  function hokkaidoSargassum(x,base,height,t){
+    const drift=Math.sin(t*.5+x*.07)*2;
+    const trunkX=Math.round(x+drift);
+    rect(trunkX-3,base-2,7,3,"#4a5142");
+    for(let y=0;y<height;y+=3){
+      const xx=trunkX+Math.round(Math.sin(t*.5+y*.07+x)*2*y/height);
+      rect(xx,base-y,2,4,"#616d47");
+      if(y>9&&y<height-7&&y%12<3){
+        for(const side of [-1,1]){
+          const extend=7+(y%5);
+          // Side shoots with narrow flattened leaves.
+          rect(xx+(side<0?-extend:2),base-y-3,extend,2,"#778653");
+          rect(xx+(side<0?-extend-3:extend),base-y-8,4,7,"#71804b");
+          rect(xx+(side<0?-extend:extend+1),base-y-9,3,3,"#a2a06c");
+          // Sargassum-style buoyant air vesicles among the branchlets.
+          const bulbX=xx+side*(extend+3);
+          rect(bulbX-2,base-y-2,4,4,"#b1a46a");
+          rect(bulbX-1,base-y-3,2,1,"#c2b97e");
+        }
+      }
+    }
+  }
+  function kushiBenihiba(x,base,height,t){
+    const rootX=Math.round(x+Math.sin(t*.48+x)*1.3);
+    rect(rootX-2,base-2,5,3,"#6f4a55");
+    // Small red algae with regularly arranged comb-like lateral branches.
+    for(let y=0;y<height;y+=3){
+      const bend=Math.round(Math.sin(t*.43+y*.11+x)*1.3*y/height);
+      const stem=rootX+bend;
+      rect(stem,base-y,2,4,"#b45a70");
+      if(y>5&&y<height-5&&y%9<3){
+        for(const side of [-1,1]){
+          const len=7+(y%4);
+          const startX=stem+(side<0?-len:2);
+          rect(startX,base-y-2,len,2,"#cb687e");
+          // Several fine, parallel toothlets create the comb silhouette.
+          for(let d=2;d<len-1;d+=3){
+            const xx=side<0?stem-d:stem+d;
+            rect(xx,base-y-5,1,4,"#e27e91");
+          }
+        }
+      }
+    }
+  }
+  function northernBottom(t){
+    // Stylized Akkeshi/North Japan mosaic: eelgrass pocket, rocky kombu
+    // beds, Sargassum branches and red kushi-benihiba on hard substrata.
+    // These are neighboring habitat motifs, not a verified quadrat.
+    for(let i=0;i<10;i++){
+      const x=8+i*13;
+      longSeagrass(x,180,24+(i*9)%24,t,"#286868","#3e8581");
+    }
+    [[0,171,37,20],[21,165,36,20],
+      [107,169,48,18],[148,166,44,20],[190,168,45,17],
+      [230,165,44,19],[262,170,40,16]].forEach(([x,y,w,h],i)=>
       seaRock(x,y,w,h,i%2?"#435768":"#334d60","#617584"));
-    // Thick eelgrass beds occupy the left third of the habitat.
-    for(let i=0;i<11;i++)longSeagrass(37+i*9,179,27+(i*7)%44,t,"#2c766b","#4b9f87");
-    for(let i=0;i<6;i++)kelp(125+i*11,176,35+(i*13)%37,t,"#356b62");
-    for(let i=0;i<4;i++)brownAlgae(22+i*13,170,30+i*8,t,"#667d57");
+    // The wide, single-bladed onikombu contrasts with the long,
+    // narrower ribbon leaves of nagakombu.
+    hokkaidoKombu(121,177,69,t,true);
+    hokkaidoKombu(148,175,78,t,true);
+    hokkaidoKombu(173,177,96,t,false);
+    hokkaidoKombu(198,176,87,t,false);
+    // Small brown branching algae with blades and floating vesicles.
+    hokkaidoSargassum(237,171,43,t);
+    hokkaidoSargassum(263,174,54,t);
+    // Fine scarlet comb-like red algae on the rocks.
+    kushiBenihiba(227,160,26,t);
+    kushiBenihiba(278,167,33,t);
     for(let i=0;i<20;i++){
-      const x=(i*43+7)%360,y=179+(i*11)%27;
+      const x=(i*43+7)%360,y=184+(i*11)%22;
       rect(x,y,3+i%3,2,i%3?"#7c8b86":"#d8c9ab");
     }
   }
