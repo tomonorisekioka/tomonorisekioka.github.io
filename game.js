@@ -450,10 +450,16 @@
     const c=crownCounts();
     ui.progress.textContent=discovered.size+" / "+regionPool().length+"タイプ採集済み · 大型金 "+c.largeGold+" / 大型銀 "+c.largeSilver+" / ミニ金 "+c.miniGold;
   }
+  // Only anonymous aggregate gameplay events, and only after analytics consent.
+  function trackGame(name, details) {
+    if (typeof window.siteAnalyticsEvent === "function")
+      window.siteAnalyticsEvent(name, details);
+  }
   function start() {
     if(audio?.unlock)audio.unlock(); // gesture-unlock SFX even with BGM disabled
     reset();
     state="playing";endAt=performance.now()+RUN_SECONDS*1000;
+    trackGame("game_start", { game_region: region });
     if(musicEnabled&&audio&&!audio.isPlaying())audio.start(region);
     updateMusicUI();
     ui.overlay.hidden=true;canvas.focus({preventScroll:true});
@@ -463,6 +469,12 @@
     // The separate BGM continues after the 30-second sampling period.
     state="ended";net=null;pointer.active=false;heldArrows.clear();
     finishedAt=performance.now();
+    trackGame("game_complete", {
+      game_region: region,
+      catch_count: caught,
+      unique_types: roundFound.size,
+      game_duration_seconds: RUN_SECONDS
+    });
     restartTouchEligible=false;
     ui.overlay.hidden=false;
     ui.kicker.textContent="FIELD REPORT";
@@ -639,6 +651,7 @@
       const reach=(n.touch?10.5:8)+5*c.scale;
       if(length(dx,dy)<=reach){
         caught++;discovered.add(c.kind);roundFound.add(c.kind);c.hidden=true;
+        trackGame("game_catch", { game_region: region });
         if(audio?.playCatch)audio.playCatch(); // true catch only; missed nets stay silent
         const previous=records[c.kind]||{count:0,big:0,small:0,large:"",mini:false};
         const badge=crownFor(c.ratio);
