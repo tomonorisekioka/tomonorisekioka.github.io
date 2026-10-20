@@ -29,6 +29,12 @@
     script.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(ID);
     document.head.appendChild(script);
   }
+  // Game telemetry goes through this consent gate rather than accessing gtag directly.
+  // Do not transmit names, identifiers, coordinates or free-text inputs.
+  window.siteAnalyticsEvent = function (name, params) {
+    if (choice !== "yes" || !loaded || typeof window.gtag !== "function") return;
+    window.gtag("event", name, params || {});
+  };
   function banner() {
     const panel = document.createElement("div");
     panel.className = "analytics-consent";
