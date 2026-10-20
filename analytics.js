@@ -66,10 +66,10 @@
     button.addEventListener("click", () => {
       // Withdrawal prevents subsequent visits from being measured; any
       // already-loaded tag cannot be unloaded without reloading the page.
-      save("no");
+      try { localStorage.removeItem(KEY); } catch (e) {}
       window.location.reload();
     });
-    button.title = "アクセス解析の許可を取り消す（再読み込み）";
+    button.title = "アクセス解析の許可・拒否を変更する";
     footer.appendChild(button);
   }
   function start() {
